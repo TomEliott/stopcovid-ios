@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  COVID-19
+
+  Created by Lunabee Studio on 10/04/2020 - for the STOP-COVID project.
+  Copyright © 2020 Lunabee Studio. All rights reserved.
+*/
+
+"NSBluetoothAlwaysUsageDescription" = "StopCovid needs Bluetooth to work.";
+"NSBluetoothPeripheralUsageDescription" = "StopCovid needs Bluetooth to work.";
+"NSCameraUsageDescription" = "StopCovid needs to access your camera in order to flash a QR code.";

@@ -1,0 +1,7 @@
+[
+    {
+        "device_handset_model": "FakePhone",
+        "tx_RSS_correction_factor": 0,
+        "rx_RSS_correction_factor": 0
+    }
+]
