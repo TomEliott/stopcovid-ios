@@ -15,31 +15,31 @@ import RobertSDK
 
 final class RealmEpoch: Object {
 
-    @objc dynamic var id: Int = 0
+    @objc dynamic var epochId: Int = 0
     @objc dynamic var ebid: String!
     @objc dynamic var ecc: String!
     
     static func from(epoch: RBEpoch) -> RealmEpoch {
-        RealmEpoch(id: epoch.id, ebid: epoch.ebid, ecc: epoch.ecc)
+        RealmEpoch(epochId: epoch.epochId, ebid: epoch.key.ebid, ecc: epoch.key.ecc)
     }
     
-    convenience init(id: Int, ebid: String, ecc: String) {
+    convenience init(epochId: Int, ebid: String, ecc: String) {
         self.init()
-        self.id = id
+        self.epochId = epochId
         self.ebid = ebid
         self.ecc = ecc
     }
     
     override class func primaryKey() -> String? {
-        return "id"
+        return "epochId"
     }
     
     override class func indexedProperties() -> [String] {
-        return ["id"]
+        return ["epochId"]
     }
     
     func toRBEpoch() -> RBEpoch {
-        RBEpoch(id: id, ebid: ebid, ecc: ecc)
+        RBEpoch(epochId: epochId, key: RBEpochKey(ebid: ebid, ecc: ecc))
     }
     
 }

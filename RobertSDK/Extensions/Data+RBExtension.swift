@@ -29,5 +29,9 @@ extension Data {
         guard let range = Range(NSMakeRange(0, count)) else { return }
         resetBytes(in: range)
     }
+    
+    func toPEM() -> String {
+        base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed])
+    }
 
 }

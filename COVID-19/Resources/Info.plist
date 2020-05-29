@@ -28,10 +28,6 @@
 	<string>StopCovid needs Bluetooth to work.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>StopCovid needs to access your camera in order to flash a QR code.</string>
-	<key>ReCaptchaDomain</key>
-	<string>https://</string>
-	<key>ReCaptchaKey</key>
-	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>SF-Pro-Text-Bold.otf</string>

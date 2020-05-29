@@ -26,7 +26,8 @@ final class CVNavigationChildController: UIViewController {
     private var embeddedController: UIViewController?
     private var titleLabelContainerViewIntialY: CGFloat?
     private var initialTitleLabelMinY: CGFloat?
-
+    private var isLargeTitleVisible: Bool = true
+    
     class func controller(_ embeddedController: UIViewController) -> UIViewController {
         let containerController: CVNavigationChildController = StoryboardScene.CVNavigationChild.cvNavigationChildController.instantiate()
         containerController.embeddedController = embeddedController
@@ -92,9 +93,15 @@ final class CVNavigationChildController: UIViewController {
         guard titleLabelContainerView?.frame.minY == titleLabelContainerViewIntialY else { return }
         let navigationBarFrame: CGRect = navigationBar.frame
         let titleFrame: CGRect = view.convert(titleLabel.frame, from: titleLabel.superview)
-        let distance: CGFloat = titleFrame.midY - navigationBarFrame.maxY
-        let alpha: CGFloat = 1.0 - max(min(distance / ((initialTitleLabelMinY ?? 0.0) - navigationBarFrame.maxY), 1.0), 0.0)
-        updateNavigationBarAlpha(alpha)
+        let distance: CGFloat = titleFrame.minY - navigationBarFrame.maxY
+        let willShowLargeTitle: Bool = distance > 0
+        let alpha: CGFloat = willShowLargeTitle ? 0.0 : 1.0
+        if willShowLargeTitle != isLargeTitleVisible {
+            isLargeTitleVisible = willShowLargeTitle
+            UIView.animate(withDuration: 0.2) {
+                self.updateNavigationBarAlpha(alpha)
+            }
+        }
     }
     
 }

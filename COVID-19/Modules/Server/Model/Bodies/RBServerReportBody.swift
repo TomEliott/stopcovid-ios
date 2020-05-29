@@ -12,7 +12,7 @@ import Foundation
 
 struct RBServerReportBody: RBServerBody {
 
-    var code: String
+    var token: String
     var contacts: [RBServerContact]?
     var contactsAsBinary: String?
     

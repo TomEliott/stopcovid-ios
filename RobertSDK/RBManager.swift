@@ -9,6 +9,7 @@
 //
 
 import UIKit
+import SwCrypt
 
 public final class RBManager {
 
@@ -17,9 +18,10 @@ public final class RBManager {
     private var server: RBServer!
     private var storage: RBStorage!
     private var bluetooth: RBBluetooth!
-    private var ka: Data?
+    private var ka: Data? { storage.getKa() }
+    private var kea: Data? { storage.getKea() }
     
-    public var isRegistered: Bool { storage.isKeyStored() && storage.getLastEpoch() != nil }
+    public var isRegistered: Bool { storage.areKeysStored() && storage.getLastEpoch() != nil }
     public var isProximityActivated: Bool {
         get { storage.isProximityActivated() }
         set { storage.save(proximityActivated: newValue) }
@@ -36,9 +38,17 @@ public final class RBManager {
         get { storage.lastStatusReceivedDate() }
         set { storage.saveLastStatusReceivedDate(newValue) }
     }
+    public var lastExposureTimeFrame: Int? {
+        get { storage.lastExposureTimeFrame() }
+        set { storage.save(lastExposureTimeFrame: newValue) }
+    }
     public var currentEpoch: RBEpoch? { storage.getCurrentEpoch() }
     public var localProximityList: [RBLocalProximity] { storage.getLocalProximityList() }
-
+    
+    public var proximitiesRetentionDurationInDays: Int?
+    public var preSymptomsSpan: Int?
+    
+    // Prevent any other instantiations.
     private init() {}
     
     public func start(isFirstInstall: Bool = false, server: RBServer, storage: RBStorage, bluetooth: RBBluetooth, restartProximityIfPossible: Bool = true) {
@@ -49,7 +59,6 @@ public final class RBManager {
             self.storage.clearAll(includingDBKey: true)
         }
         self.storage.start()
-        loadKey()
         if isProximityActivated && restartProximityIfPossible && !isFirstInstall {
             startProximityDetection()
         }
@@ -100,18 +109,7 @@ public final class RBManager {
         bluetooth.stop()
     }
     
-    private func loadKey() {
-        if let key = storage.getKey() {
-            ka = key
-        }
-    }
-    
-    private func wipeKey() {
-        ka?.wipeData()
-    }
-    
     @objc private  func applicationWillTerminate() {
-        wipeKey()
         storage.stop()
     }
     
@@ -132,11 +130,12 @@ extension RBManager {
         do {
             let ntpTimestamp: Int = Date().timeIntervalSince1900
             let statusMessage: RBStatusMessage = try RBMessageGenerator.generateStatusMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
-            server.status(ebid: statusMessage.ebid, time: statusMessage.time, mac: statusMessage.mac) { result in
+            server.status(epochId: statusMessage.epochId, ebid: statusMessage.ebid, time: statusMessage.time, mac: statusMessage.mac) { result in
                 switch result {
                 case let .success(response):
                     do {
                         try self.processStatusResponse(response)
+                        self.clearOldLocalProximities()
                         completion(nil)
                     } catch {
                         completion(error)
@@ -150,12 +149,14 @@ extension RBManager {
         }
     }
     
-    public func report(code: String, completion: @escaping (_ error: Error?) -> ()) {
-        let localHelloMessages: [RBLocalProximity] = storage.getLocalProximityList()
+    public func report(code: String, symptomsOrigin: Date?, completion: @escaping (_ error: Error?) -> ()) {
+        let origin: Date = symptomsOrigin?.rbDateByAddingDays(-(preSymptomsSpan ?? 0)) ?? .distantPast
+        let localHelloMessages: [RBLocalProximity] = storage.getLocalProximityList(from: origin, to: Date())
         server.report(code: code, helloMessages: localHelloMessages) { error in
             if let error = error {
                 completion(error)
             } else {
+                self.clearLocalProximityList()
                 self.isSick = true
                 completion(nil)
             }
@@ -171,11 +172,15 @@ extension RBManager {
     }
     
     public func register(token: String, completion: @escaping (_ error: Error?) -> ()) {
-        server.register(token: token) { result in
+        guard let keys: RBECKeys = try? RBKeysManager.generateKeys() else {
+            completion(NSError.rbLocalizedError(message: "Impossible to set keys up.", code: 0))
+            return
+        }
+        server.register(token: token, publicKey: keys.publicKeyBase64) { result in
             switch result {
             case let .success(response):
                 do {
-                    try self.processRegisterResponse(response)
+                    try self.processRegisterResponse(response, keys: keys)
                     completion(nil)
                 } catch {
                     completion(error)
@@ -204,8 +209,8 @@ extension RBManager {
         }
         do {
             let ntpTimestamp: Int = Date().timeIntervalSince1900
-            let statusMessage: RBUnregisterMessage = try RBMessageGenerator.generateUnregisterMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
-            server.unregister(ebid: statusMessage.ebid, time: statusMessage.time, mac: statusMessage.mac, completion: { error in
+            let unregisterMessage: RBUnregisterMessage = try RBMessageGenerator.generateUnregisterMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
+            server.unregister(epochId: unregisterMessage.epochId, ebid: unregisterMessage.ebid, time: unregisterMessage.time, mac: unregisterMessage.mac, completion: { error in
                 if let error = error {
                     completion(error)
                 } else {
@@ -231,8 +236,8 @@ extension RBManager {
         }
         do {
             let ntpTimestamp: Int = Date().timeIntervalSince1900
-            let statusMessage: RBDeleteExposureHistoryMessage = try RBMessageGenerator.generateDeleteExposureHistoryMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
-            server.deleteExposureHistory(ebid: statusMessage.ebid, time: statusMessage.time, mac: statusMessage.mac, completion: { error in
+            let deleteExposureHistoryMessage: RBDeleteExposureHistoryMessage = try RBMessageGenerator.generateDeleteExposureHistoryMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
+            server.deleteExposureHistory(epochId: deleteExposureHistoryMessage.epochId, ebid: deleteExposureHistoryMessage.ebid, time: deleteExposureHistoryMessage.time, mac: deleteExposureHistoryMessage.mac, completion: { error in
                 if let error = error {
                     completion(error)
                 } else {
@@ -258,39 +263,51 @@ extension RBManager {
     
     public func clearAllLocalData() {
         storage.clearAll(includingDBKey: false)
-        clearKey()
     }
     
-    func clearKey() {
-        ka?.wipeData()
-        ka = nil
+    private func clearOldLocalProximities() {
+        guard let retentionDuration = proximitiesRetentionDurationInDays else { return }
+        storage.clearProximityList(before: Date().rbDateByAddingDays(-retentionDuration))
     }
     
 }
 
 extension RBManager {
     
-    private func processRegisterResponse(_ response: RBRegisterResponse) throws {
-        guard let data = Data(base64Encoded: response.key) else {
-            throw NSError.rbLocalizedError(message: "The provided key is not a valid base64 string", code: 0)
+    private func processRegisterResponse(_ response: RBRegisterResponse, keys: RBECKeys) throws {
+        guard let serverPublicKey = server.publicKey else {
+            throw NSError.rbLocalizedError(message: "Malformed server public key.", code: 0)
         }
-        storage.save(key: data)
-        ka = data
+        let cryptoKeys: RBCryptoKeys = try RBKeysManager.generateSecret(keys: keys, serverPublicKey: serverPublicKey)
+        storage.save(ka: cryptoKeys.ka)
+        storage.save(kea: cryptoKeys.kea)
+        
+        let epochs: [RBEpoch] = try decrypt(tuples: response.tuples)
         try storage.save(timeStart: response.timeStart)
-        if !response.epochs.isEmpty {
+        if !epochs.isEmpty {
             clearLocalEpochs()
-            storage.save(epochs: response.epochs)
+            storage.save(epochs: epochs)
         }
     }
     
     private func processStatusResponse(_ response: RBStatusResponse) throws {
+        let epochs: [RBEpoch] = try decrypt(tuples: response.tuples)
         storage.save(isAtRisk: response.atRisk)
         storage.save(lastExposureTimeFrame: response.lastExposureTimeFrame)
-        if !response.epochs.isEmpty {
+        if !epochs.isEmpty {
             clearLocalEpochs()
-            storage.save(epochs: response.epochs)
+            storage.save(epochs: epochs)
         }
         lastStatusReceivedDate = Date()
+    }
+    
+    private func decrypt(tuples: String) throws -> [RBEpoch] {
+        let tuplesData: Data = Data(base64Encoded: tuples)!
+        let iv: Data = Data(tuplesData[0..<12])
+        let cypher: Data = Data(tuplesData[12..<tuplesData.count])
+        let result: Data = try CC.cryptAuth(.decrypt, blockMode: .gcm, algorithm: .aes, data: cypher, aData: Data(), key: kea!, iv: iv, tagLength: 16)
+        let epochs: [RBEpoch] = try JSONDecoder().decode([RBEpoch].self, from: result)
+        return epochs
     }
     
 }

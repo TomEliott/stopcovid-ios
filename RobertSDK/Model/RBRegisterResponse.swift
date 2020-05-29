@@ -12,16 +12,14 @@ import UIKit
 
 public struct RBRegisterResponse {
 
-    let key: String
-    let epochs: [RBEpoch]
+    let tuples: String
     let timeStart: Int
-    let filteringAlgoConfig: [[String: Any]]
+    let config: [[String: Any]]
     
-    public init(key: String, epochs: [RBEpoch], timeStart: Int, filteringAlgoConfig: [[String: Any]]) {
-        self.key = key
-        self.epochs = epochs
+    public init(tuples: String, timeStart: Int, config: [[String: Any]]) {
+        self.tuples = tuples
         self.timeStart = timeStart
-        self.filteringAlgoConfig = filteringAlgoConfig
+        self.config = config
     }
     
 }

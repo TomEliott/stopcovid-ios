@@ -13,7 +13,8 @@ import UIKit
 
 enum Certificate {
     
-    case certificate
+    case apiProd
+    case appProd
     
     func validateChallenge(_ challenge: URLAuthenticationChallenge, completion: @escaping (_ validated: Bool, _ credential: URLCredential?) -> ()) {
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
@@ -32,7 +33,7 @@ enum Certificate {
         let serverCertificateData: CFData = SecCertificateCopyData(serverCertificate)
         let data: UnsafePointer<UInt8> = CFDataGetBytePtr(serverCertificateData)
         let size: CFIndex = CFDataGetLength(serverCertificateData)
-        let cert1Base64: String = Data(bytes: data, count: size).base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed])
+        let cert1Base64: String = Data(bytes: data, count: size).base64EncodedString()
         
         guard let cert2Base64 = self.fileBase64Content() else {
             completion(false, nil)
@@ -45,17 +46,17 @@ enum Certificate {
     
     private func fileName() -> String {
         switch self {
-        case .certificate:
-            return ""
+        case .apiProd:
+            return "api.stopcovid.gouv.fr"
+        case .appProd:
+            return "app.stopcovid.gouv.fr"
         }
     }
     
     private func fileBase64Content() -> String? {
-        guard let filePath = Bundle.main.path(forResource: fileName(), ofType: "der") else { return nil }
+        guard let filePath = Bundle.main.path(forResource: fileName(), ofType: "pem") else { return nil }
         guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else { return nil }
-        return String(data: data, encoding: .utf8)?.replacingOccurrences(of: "-----BEGIN CERTIFICATE-----\n", with: "")
-                                                   .replacingOccurrences(of: "\n-----END CERTIFICATE-----\n", with: "")
-                                                   .replacingOccurrences(of: "\n-----END CERTIFICATE-----", with: "")
+        return String(data: data, encoding: .utf8)?.cleaningPEMStrings()
     }
 
 }

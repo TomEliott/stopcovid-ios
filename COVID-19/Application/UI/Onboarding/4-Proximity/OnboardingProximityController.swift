@@ -38,7 +38,7 @@ final class OnboardingProximityController: OnboardingController {
     }
 
     override func bottomContainerButtonTouched() {
-        BluetoothAuthorizationManager.shared.requestAuthorizations() {
+        BluetoothStateManager.shared.requestAuthorization {
             super.bottomContainerButtonTouched()
         }
     }

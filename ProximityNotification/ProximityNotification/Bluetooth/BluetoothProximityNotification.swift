@@ -98,6 +98,7 @@ final class BluetoothProximityNotification: ProximityNotification {
             self.dispatchQueue.async {
                 self.scannedPeripheralForPeripheralIdentifier.removeExpiredValues()
                 self.bluetoothProximityPayloadForPeripheralIdentifier.removeExpiredValues()
+                self.connectionDateForPayloadIdentifier.removeExpiredValues()
             }
         }
         
@@ -158,5 +159,11 @@ extension BluetoothProximityNotification: BluetoothCentralManagerDelegate {
                 proximityInfoUpdateHandler?(proximityInfo)
             }
         }
+    }
+    
+    func bluetoothCentralManager(_ centralManager: BluetoothCentralManagerProtocol,
+                                 didNotFindServiceForPeripheralIdentifier peripheralIdentifier: UUID) {
+        scannedPeripheralForPeripheralIdentifier.removeValue(forKey: peripheralIdentifier)
+        bluetoothProximityPayloadForPeripheralIdentifier.removeValue(forKey: peripheralIdentifier)
     }
 }

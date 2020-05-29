@@ -24,7 +24,8 @@ final class ReCaptchaManager: NSObject {
         let controller: ReCaptchaController = ReCaptchaController { [weak self] in
             self?.reset()
         }
-        recaptcha = try? ReCaptcha()
+        recaptcha = try? ReCaptcha(apiKey: "Fake",
+                                   baseURL: URL(string: "https:"))
         HUD.show(.progress)
         recaptcha?.configureWebView { webView in
             HUD.hide()
@@ -38,6 +39,7 @@ final class ReCaptchaManager: NSObject {
                 let token: String = try result.dematerialize()
                 completion(token)
             } catch {
+                print(error)
                 completion(nil)
             }
             controller.dismiss()

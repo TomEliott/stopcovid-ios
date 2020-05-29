@@ -138,6 +138,7 @@ class BluetoothCentralManager: NSObject, BluetoothCentralManagerProtocol {
     private func discoverCharacteristics(of peripheral: CBPeripheral) {
         guard let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }) else {
             logger.log(logLevel: .debug, "service not found for peripheral \(peripheral)")
+            delegate?.bluetoothCentralManager(self, didNotFindServiceForPeripheralIdentifier: peripheral.identifier)
             disconnectPeripheral(peripheral)
             return
         }
@@ -308,9 +309,10 @@ extension BluetoothCentralManager: CBPeripheralDelegate {
     }
     
     func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
-        logger.log(logLevel: .debug, "peripheral \(peripheral) did modify services")
+        logger.log(logLevel: .debug, "peripheral \(peripheral) did modify services \(invalidatedServices)")
         
         if invalidatedServices.contains(where: { $0.uuid == serviceUUID }) {
+            delegate?.bluetoothCentralManager(self, didNotFindServiceForPeripheralIdentifier: peripheral.identifier)
             disconnectPeripheral(peripheral)
         }
     }

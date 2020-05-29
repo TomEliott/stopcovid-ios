@@ -98,11 +98,9 @@ final class AppMaintenanceController: CVTableViewController, MaintenanceControll
     }
     
     @objc private func didTouchButton() {
-        PKHUD.sharedHUD.gracePeriod = 0.0
         HUD.show(.progress)
         MaintenanceManager.shared.checkMaintenanceState {
             HUD.hide()
-            PKHUD.sharedHUD.gracePeriod = 0.2
         }
     }
 

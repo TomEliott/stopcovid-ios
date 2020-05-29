@@ -25,10 +25,12 @@ public protocol RBStorage {
     func save(timeStart: Int) throws
     func getTimeStart() throws -> Int
     
-    // MARK: - Key -
-    func save(key: Data)
-    func getKey() -> Data?
-    func isKeyStored() -> Bool
+    // MARK: - Keys -
+    func save(ka: Data)
+    func getKa() -> Data?
+    func save(kea: Data)
+    func getKea() -> Data?
+    func areKeysStored() -> Bool
     
     // MARK: - Proximity -
     func save(proximityActivated: Bool)
@@ -37,6 +39,8 @@ public protocol RBStorage {
     // MARK: - Local Proximity -
     func save(localProximity: RBLocalProximity)
     func getLocalProximityList() -> [RBLocalProximity]
+    func getLocalProximityList(from: Date, to: Date) -> [RBLocalProximity]
+    func clearProximityList(before date: Date)
     
     // MARK: - Status: isAtRisk -
     func save(isAtRisk: Bool?)

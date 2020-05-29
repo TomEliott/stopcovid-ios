@@ -25,6 +25,8 @@ final class ProximityController: CVTableViewController {
     private var isActivated: Bool { canActivateProximity && RBManager.shared.isProximityActivated }
     private var isChangingState: Bool = false
     
+    private var areNotificationsAuthorized: Bool = false
+    
     init(didTouchAbout: (() -> ())?, didTouchManageData: (() -> ())?, didTouchPrivacy: (() -> ())?, deinitBlock: (() -> ())?) {
         self.didTouchAbout = didTouchAbout
         self.didTouchManageData = didTouchManageData
@@ -42,9 +44,10 @@ final class ProximityController: CVTableViewController {
         initUI()
         initBottomMessageContainer()
         addObserver()
-        reloadUI()
-        updateAuthorizationsState()
         setInteractiveRecognizer()
+        updateNotificationsState {
+            self.updateUIForAuthorizationChange()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -68,42 +71,52 @@ final class ProximityController: CVTableViewController {
         navigationChildController?.updateTitle(title)
     }
     
-    private func updateAuthorizationsState() {
+    private func updateNotificationsState(_ completion: (() -> ())? = nil) {
         NotificationsManager.shared.areNotificationsAuthorized { notificationsAuthorized in
-            BluetoothAuthorizationManager.shared.isBluetoothAuthorized { bluetoothAuthorized in
-                let messageFont: UIFont? = Appearance.BottomMessage.font
-                let messageTextColor: UIColor = .black
-                let messageBackgroundColor: UIColor = Asset.Colors.info.color
-                if !notificationsAuthorized && !bluetoothAuthorized {
-                    self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noNotificationsOrBluetooth".localized,
-                                                                         font: messageFont,
-                                                                         textColor: messageTextColor,
-                                                                         backgroundColor: messageBackgroundColor,
-                                                                         actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
-                } else if !notificationsAuthorized {
-                    self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noNotifications".localized,
-                                                                         font: messageFont,
-                                                                         textColor: messageTextColor,
-                                                                         backgroundColor: messageBackgroundColor,
-                                                                         actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
-                } else if !bluetoothAuthorized {
-                    self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noBluetooth".localized,
-                                                                         font: messageFont,
-                                                                         textColor: messageTextColor,
-                                                                         backgroundColor: messageBackgroundColor,
-                                                                         actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
-                } else if !RBManager.shared.isProximityActivated {
-                    self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.activateProximity".localized,
-                                                                         font: messageFont,
-                                                                         textColor: messageTextColor,
-                                                                         backgroundColor: messageBackgroundColor)
-                } else {
-                    self.bottomMessageContainerController?.updateMessage()
-                }
-                self.canActivateProximity = notificationsAuthorized && bluetoothAuthorized
-                self.reloadUI(animated: true)
+            self.areNotificationsAuthorized = notificationsAuthorized
+            DispatchQueue.main.async {
+                completion?()
             }
         }
+    }
+    
+    private func updateUIForAuthorizationChange() {
+        let messageFont: UIFont? = Appearance.BottomMessage.font
+        let messageTextColor: UIColor = .black
+        let messageBackgroundColor: UIColor = Asset.Colors.info.color
+        if !areNotificationsAuthorized && !BluetoothStateManager.shared.isAuthorized {
+            self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noNotificationsOrBluetooth".localized,
+                                                                 font: messageFont,
+                                                                 textColor: messageTextColor,
+                                                                 backgroundColor: messageBackgroundColor,
+                                                                 actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
+        } else if !areNotificationsAuthorized {
+            self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noNotifications".localized,
+                                                                 font: messageFont,
+                                                                 textColor: messageTextColor,
+                                                                 backgroundColor: messageBackgroundColor,
+                                                                 actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
+        } else if !BluetoothStateManager.shared.isAuthorized {
+            self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.noBluetooth".localized,
+                                                                 font: messageFont,
+                                                                 textColor: messageTextColor,
+                                                                 backgroundColor: messageBackgroundColor,
+                                                                 actionHint: "accessibility.hint.proximity.alert.touchToGoToSettings.ios".localized)
+        } else if !BluetoothStateManager.shared.isActivated {
+            self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.bluetoothOff".localized,
+                                                                 font: messageFont,
+                                                                 textColor: messageTextColor,
+                                                                 backgroundColor: messageBackgroundColor)
+        } else if !RBManager.shared.isProximityActivated {
+            self.bottomMessageContainerController?.updateMessage(text: "proximityController.error.activateProximity".localized,
+                                                                 font: messageFont,
+                                                                 textColor: messageTextColor,
+                                                                 backgroundColor: messageBackgroundColor)
+        } else {
+            self.bottomMessageContainerController?.updateMessage()
+        }
+        self.canActivateProximity = areNotificationsAuthorized && BluetoothStateManager.shared.isAuthorized && BluetoothStateManager.shared.isActivated
+        self.reloadUI(animated: true)
     }
     
     override func createRows() -> [CVRow] {
@@ -138,20 +151,6 @@ final class ProximityController: CVTableViewController {
                                    xibName: .textCell,
                                    theme: CVRow.Theme(topInset: 0.0, bottomInset: 20.0, textAlignment: .left, separatorLeftInset: Appearance.Cell.leftMargin))
         rows.append(textRow)
-        let manageDataRow: CVRow = CVRow(title: "proximityController.manageData".localized,
-                                         image: Asset.Images.manageData.image,
-                                         xibName: .standardCell,
-                                         theme: CVRow.Theme(topInset: 15.0,
-                                                            bottomInset: 15.0,
-                                                            textAlignment: .left,
-                                                            titleFont: { Appearance.Cell.Text.standardFont },
-                                                            titleColor: Asset.Colors.tint.color,
-                                                            imageTintColor: Appearance.Cell.Image.tintColor,
-                                                            imageSize: Appearance.Cell.Image.size,
-                                                            separatorLeftInset: Appearance.Cell.leftMargin), selectionAction: { [weak self] in
-                                        self?.didTouchManageData?()
-                                    })
-        rows.append(manageDataRow)
         let privacyRow: CVRow = CVRow(title: "privacyController.tabBar.title".localized,
                                       image: Asset.Images.privacy.image,
                                       xibName: .standardCell,
@@ -162,10 +161,24 @@ final class ProximityController: CVTableViewController {
                                                          titleColor: Asset.Colors.tint.color,
                                                          imageTintColor: Appearance.Cell.Image.tintColor,
                                                          imageSize: Appearance.Cell.Image.size,
-                                                         separatorLeftInset: 0.0), selectionAction: { [weak self] in
+                                                         separatorLeftInset: Appearance.Cell.leftMargin), selectionAction: { [weak self] in
                                                             self?.didTouchPrivacy?()
                                 })
         rows.append(privacyRow)
+        let manageDataRow: CVRow = CVRow(title: "proximityController.manageData".localized,
+                                         image: Asset.Images.manageData.image,
+                                         xibName: .standardCell,
+                                         theme: CVRow.Theme(topInset: 15.0,
+                                                            bottomInset: 15.0,
+                                                            textAlignment: .left,
+                                                            titleFont: { Appearance.Cell.Text.standardFont },
+                                                            titleColor: Asset.Colors.tint.color,
+                                                            imageTintColor: Appearance.Cell.Image.tintColor,
+                                                            imageSize: Appearance.Cell.Image.size,
+                                                            separatorLeftInset: 0.0), selectionAction: { [weak self] in
+                                        self?.didTouchManageData?()
+                                    })
+        rows.append(manageDataRow)
         rows.append(.empty)
         return rows
     }
@@ -199,9 +212,10 @@ final class ProximityController: CVTableViewController {
     
     private func initBottomMessageContainer() {
         bottomMessageContainerController?.messageDidTouch = { [weak self] in
-            if self?.canActivateProximity == true {
-                self?.didChangeSwitchValue(isOn: true)
-            } else {
+            guard let self = self else { return }
+            if self.canActivateProximity {
+                self.didChangeSwitchValue(isOn: true)
+            } else if !self.areNotificationsAuthorized || !BluetoothStateManager.shared.isAuthorized {
                 UIApplication.shared.openSettings()
             }
         }
@@ -209,11 +223,13 @@ final class ProximityController: CVTableViewController {
     
     private func addObserver() {
         LocalizationsManager.shared.addObserver(self)
-        NotificationCenter.default.addObserver(self, selector: #selector(appWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        BluetoothStateManager.shared.addObserver(self)
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     private func removeObservers() {
         LocalizationsManager.shared.removeObserver(self)
+        BluetoothStateManager.shared.removeObserver(self)
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -249,7 +265,7 @@ final class ProximityController: CVTableViewController {
             }
         } else {
             RBManager.shared.isProximityActivated = false
-            updateAuthorizationsState()
+            updateUIForAuthorizationChange()
             RBManager.shared.stopProximityDetection()
             isChangingState = false
         }
@@ -257,7 +273,7 @@ final class ProximityController: CVTableViewController {
     
     private func processRegistrationDone() {
         RBManager.shared.isProximityActivated = true
-        updateAuthorizationsState()
+        updateUIForAuthorizationChange()
         RBManager.shared.startProximityDetection()
     }
     
@@ -265,8 +281,11 @@ final class ProximityController: CVTableViewController {
         didTouchAbout?()
     }
     
-    @objc private func appWillEnterForeground() {
-        updateAuthorizationsState()
+    @objc private func appDidBecomeActive() {
+        updateNotificationsState {
+            self.updateUIForAuthorizationChange()
+        }
+        
     }
     
     private func setInteractiveRecognizer() {
@@ -282,6 +301,14 @@ extension ProximityController: LocalizationsChangesObserver {
     func localizationsChanged() {
         updateTitle()
         reloadUI()
+    }
+    
+}
+
+extension ProximityController: BluetoothStateObserver {
+    
+    func bluetoothStateDidUpdate() {
+        updateUIForAuthorizationChange()
     }
     
 }

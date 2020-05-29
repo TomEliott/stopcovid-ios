@@ -14,22 +14,31 @@ import UIKit
 final class UserDefault<T> {
     
     let defaults: UserDefaults = .standard
-    let key: String
+    let key: Key
     let defaultValue: T
     
-    var projectedValue: String { key }
+    var projectedValue: String { key.rawValue }
     
     var wrappedValue: T {
-        get { defaults.object(forKey: key) as? T ?? defaultValue }
+        get { defaults.object(forKey: key.rawValue) as? T ?? defaultValue }
         set {
-            defaults.set(newValue, forKey: key)
+            defaults.set(newValue, forKey: key.rawValue)
             defaults.synchronize()
         }
     }
 
-    init(wrappedValue: T, key: String) {
+    init(wrappedValue: T, key: Key) {
         self.defaultValue = wrappedValue
         self.key = key
+    }
+    
+}
+
+extension UserDefault {
+    
+    enum Key: String {
+        case isAppAlreadyInstalled = "isAppAlreadyInstalled_v2"
+        case isOnboardingDone = "isOnboardingDone_v2"
     }
     
 }

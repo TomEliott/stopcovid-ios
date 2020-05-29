@@ -42,6 +42,7 @@ class RemoteFileSyncManager: NSObject {
     }
     
     @objc private func appDidBecomeActive() {
+        guard !RemoteFileConstant.useOnlyLocalStrings else { return }
         fetchLastFile(languageCode: Locale.currentLanguageCode)
     }
     
@@ -78,7 +79,7 @@ class RemoteFileSyncManager: NSObject {
     private func writeInitialFileIfNeeded() {
         let fileUrl: URL = initialFileUrl(for: Locale.currentLanguageCode)
         let destinationFileUrl: URL = createWorkingDirectoryIfNeeded().appendingPathComponent(fileUrl.lastPathComponent)
-        if !FileManager.default.fileExists(atPath: destinationFileUrl.path) {
+        if !FileManager.default.fileExists(atPath: destinationFileUrl.path) || RemoteFileConstant.useOnlyLocalStrings {
             try? FileManager.default.removeItem(at: destinationFileUrl)
             try? FileManager.default.copyItem(at: fileUrl, to: destinationFileUrl)
         }
@@ -89,7 +90,8 @@ class RemoteFileSyncManager: NSObject {
 extension RemoteFileSyncManager: URLSessionDelegate {
     
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        Certificate.certificate.validateChallenge(challenge) { validated, credential in
+        Certificate.appProd.validateChallenge(challenge) { validated, credential in
+            print("Remote file sync request - Certificate (StopCovid) validated: \(validated)")
             validated ? completionHandler(.useCredential, credential) : completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }

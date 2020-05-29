@@ -13,9 +13,8 @@ import Foundation
 
 enum MaintenanceConstant {
 
-    static let baseUrl: URL = URL(string: "https://")!
-    
-    static let fileName: String = "info.json"
+    static let baseUrl: URL = URL(string: "https://app.stopcovid.gouv.fr/maintenance")!
+    static let fileName: String = "info-maintenance-v2.json"
     
     static var fileUrl: URL { baseUrl.appendingPathComponent(fileName) }
     

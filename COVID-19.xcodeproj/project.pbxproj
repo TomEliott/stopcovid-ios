@@ -117,6 +117,9 @@
 		370AA9C524485C12009CEB0D /* Character+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370AA9C324485C12009CEB0D /* Character+Extension.swift */; };
 		371134B02472A6C700E70547 /* Marianne-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 371134AE2472A6C600E70547 /* Marianne-Bold.otf */; };
 		371134B12472A6C700E70547 /* Marianne-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 371134AF2472A6C600E70547 /* Marianne-ExtraBold.otf */; };
+		37127274247D4CA8004DD969 /* String+RBExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37127273247D4CA8004DD969 /* String+RBExtension.swift */; };
+		3712727D247E5B02004DD969 /* NotificationsConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3712727C247E5B02004DD969 /* NotificationsConstant.swift */; };
+		371C28CB2475533F00D46DD2 /* RBKeysManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371C28CA2475533F00D46DD2 /* RBKeysManager.swift */; };
 		371C28D02475862500D46DD2 /* MaintenanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371C28CF2475862500D46DD2 /* MaintenanceController.swift */; };
 		371C28D42476BD2800D46DD2 /* AppMaintenanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371C28D32476BD2800D46DD2 /* AppMaintenanceController.swift */; };
 		371C28D62476C34D00D46DD2 /* MaintenanceSupportingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371C28D52476C34D00D46DD2 /* MaintenanceSupportingCoordinator.swift */; };
@@ -131,10 +134,10 @@
 		37689F81246A918600D99BC4 /* ReCaptchaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37689F80246A918600D99BC4 /* ReCaptchaManager.swift */; };
 		37689F85246AE49700D99BC4 /* strings-es.json in Resources */ = {isa = PBXBuildFile; fileRef = 37689F84246AE49700D99BC4 /* strings-es.json */; };
 		37689F87246AE4B200D99BC4 /* privacy-es.json in Resources */ = {isa = PBXBuildFile; fileRef = 37689F86246AE4B200D99BC4 /* privacy-es.json */; };
+		37689F8B246AF2DE00D99BC4 /* app.stopcovid.gouv.fr.pem in Resources */ = {isa = PBXBuildFile; fileRef = 37689F8A246AF2DE00D99BC4 /* app.stopcovid.gouv.fr.pem */; };
 		37689F8F246AF31800D99BC4 /* Certificates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37689F8E246AF31800D99BC4 /* Certificates.swift */; };
 		37689F94246BCFE900D99BC4 /* NSError+RBExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37689F92246BCFE900D99BC4 /* NSError+RBExtension.swift */; };
 		37689F95246BD01200D99BC4 /* RBReceivedProximity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378A26E02462FCA2000F2FD8 /* RBReceivedProximity.swift */; };
-		37689F98246BF15C00D99BC4 /* device_parameters_correction.json in Resources */ = {isa = PBXBuildFile; fileRef = 37689F97246BF15B00D99BC4 /* device_parameters_correction.json */; };
 		3768A09C246D276F00D99BC4 /* privacy-it.json in Resources */ = {isa = PBXBuildFile; fileRef = 3768A09A246D276F00D99BC4 /* privacy-it.json */; };
 		3768A09D246D276F00D99BC4 /* privacy-pt.json in Resources */ = {isa = PBXBuildFile; fileRef = 3768A09B246D276F00D99BC4 /* privacy-pt.json */; };
 		3768A0A0246D278A00D99BC4 /* strings-it.json in Resources */ = {isa = PBXBuildFile; fileRef = 3768A09E246D278A00D99BC4 /* strings-it.json */; };
@@ -166,6 +169,10 @@
 		37A7FB9B24473C9900A4B99E /* InteractivePopGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A7FB9924473C9900A4B99E /* InteractivePopGestureRecognizer.swift */; };
 		37A9250D246EC20C0081862C /* RobertSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37B0231624595ADF002281E9 /* RobertSDK.framework */; };
 		37A9250E246EC20C0081862C /* RobertSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 37B0231624595ADF002281E9 /* RobertSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		37AC2F14247E700200AE2B13 /* RBECKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AC2F13247E700200AE2B13 /* RBECKeys.swift */; };
+		37AC2F16247E781700AE2B13 /* SecKey+RBExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AC2F15247E781700AE2B13 /* SecKey+RBExtension.swift */; };
+		37AC2F22247EA03700AE2B13 /* RBEpochKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AC2F21247EA03700AE2B13 /* RBEpochKey.swift */; };
+		37AC2F26247EB5E500AE2B13 /* api.stopcovid.gouv.fr.pem in Resources */ = {isa = PBXBuildFile; fileRef = 37AC2F24247EB5E500AE2B13 /* api.stopcovid.gouv.fr.pem */; };
 		37AD406D24642366005FD22B /* libProximityNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 378A26F524641F0A000F2FD8 /* libProximityNotification.a */; };
 		37AD4072246437ED005FD22B /* UIPopoverPresentationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37AD4071246437ED005FD22B /* UIPopoverPresentationController+Extension.swift */; };
 		37B0231A24595ADF002281E9 /* RobertSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B0231824595ADF002281E9 /* RobertSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -184,14 +191,16 @@
 		37B0233724597558002281E9 /* RBStatusMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B0233524597558002281E9 /* RBStatusMessage.swift */; };
 		37B02345245AA892002281E9 /* BluetoothManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B02344245AA892002281E9 /* BluetoothManager.swift */; };
 		37B02348245AA902002281E9 /* RBBluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B02346245AA900002281E9 /* RBBluetooth.swift */; };
-		37B0234A245AABCF002281E9 /* BluetoothConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B02349245AABCF002281E9 /* BluetoothConstants.swift */; };
-		37B0234C245AAD67002281E9 /* BluetoothAuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B0234B245AAD67002281E9 /* BluetoothAuthorizationManager.swift */; };
+		37B0234C245AAD67002281E9 /* BluetoothStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B0234B245AAD67002281E9 /* BluetoothStateManager.swift */; };
 		37B854942476DD880007709F /* SickBlockingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B854932476DD880007709F /* SickBlockingCoordinator.swift */; };
-		37D16F3F246D7C98009B3129 /* DeviceParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D16F3E246D7C98009B3129 /* DeviceParameters.swift */; };
-		37D16F42246D7DA3009B3129 /* DeviceParametersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D16F41246D7DA3009B3129 /* DeviceParametersManager.swift */; };
+		37C772B92480027C00B01BAE /* ParametersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D16F41246D7DA3009B3129 /* ParametersManager.swift */; };
+		37C772BA2480027C00B01BAE /* DeviceParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D16F3E246D7C98009B3129 /* DeviceParameters.swift */; };
+		37C772CA2481195C00B01BAE /* RBCryptoKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C772C92481195C00B01BAE /* RBCryptoKeys.swift */; };
+		37C772D824816E3E00B01BAE /* strings-ar.json in Resources */ = {isa = PBXBuildFile; fileRef = 37C772D624816E3E00B01BAE /* strings-ar.json */; };
+		37C772D924816E3E00B01BAE /* strings-de.json in Resources */ = {isa = PBXBuildFile; fileRef = 37C772D724816E3E00B01BAE /* strings-de.json */; };
+		37C772DC24816ED200B01BAE /* privacy-ar.json in Resources */ = {isa = PBXBuildFile; fileRef = 37C772DA24816ED200B01BAE /* privacy-ar.json */; };
+		37C772DD24816ED200B01BAE /* privacy-de.json in Resources */ = {isa = PBXBuildFile; fileRef = 37C772DB24816ED200B01BAE /* privacy-de.json */; };
 		37D8F28F246475B4008E8005 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37D8F28E246475B4008E8005 /* Data+Extension.swift */; };
-		37F979BE2452130600CDA154 /* RBServerEpochKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979BC2452130600CDA154 /* RBServerEpochKey.swift */; };
-		37F979C12452132E00CDA154 /* RBServerEpoch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979BF2452132E00CDA154 /* RBServerEpoch.swift */; };
 		37F979C6245213B100CDA154 /* RBServerStatusResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979C4245213B100CDA154 /* RBServerStatusResponse.swift */; };
 		37F979CB2452155300CDA154 /* RBServerStatusBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979C92452155300CDA154 /* RBServerStatusBody.swift */; };
 		37F979D52452186600CDA154 /* RBServerUnregisterBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979D32452186600CDA154 /* RBServerUnregisterBody.swift */; };
@@ -204,6 +213,7 @@
 		37F979FC24521EA900CDA154 /* RBServerRegisterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979FA24521EA900CDA154 /* RBServerRegisterResponse.swift */; };
 		37F979FF24521FB600CDA154 /* RBServerBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F979FD24521FB600CDA154 /* RBServerBody.swift */; };
 		37F97A022452233200CDA154 /* RBServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F97A002452233200CDA154 /* RBServerResponse.swift */; };
+		C67476FB3395F72144291F30 /* Pods_RobertSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA02CBEDACA215063614C6F /* Pods_RobertSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -253,6 +263,7 @@
 
 /* Begin PBXFileReference section */
 		0DE9ACCB8FB4E5D7E45B027F /* Pods-Proximity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Proximity.debug.xcconfig"; path = "Target Support Files/Pods-Proximity/Pods-Proximity.debug.xcconfig"; sourceTree = "<group>"; };
+		2DA02CBEDACA215063614C6F /* Pods_RobertSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RobertSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		37013DF0243F5E3D00FCB360 /* strings-en.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "strings-en.json"; sourceTree = "<group>"; };
 		37013DF1243F5E3D00FCB360 /* strings-fr.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "strings-fr.json"; sourceTree = "<group>"; };
 		37013DF4243F603C00FCB360 /* FileManager+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extension.swift"; sourceTree = "<group>"; };
@@ -280,6 +291,9 @@
 		370AA9C324485C12009CEB0D /* Character+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Character+Extension.swift"; sourceTree = "<group>"; };
 		371134AE2472A6C600E70547 /* Marianne-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marianne-Bold.otf"; sourceTree = "<group>"; };
 		371134AF2472A6C600E70547 /* Marianne-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marianne-ExtraBold.otf"; sourceTree = "<group>"; };
+		37127273247D4CA8004DD969 /* String+RBExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+RBExtension.swift"; sourceTree = "<group>"; };
+		3712727C247E5B02004DD969 /* NotificationsConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsConstant.swift; sourceTree = "<group>"; };
+		371C28CA2475533F00D46DD2 /* RBKeysManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBKeysManager.swift; sourceTree = "<group>"; };
 		371C28CF2475862500D46DD2 /* MaintenanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaintenanceController.swift; sourceTree = "<group>"; };
 		371C28D32476BD2800D46DD2 /* AppMaintenanceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMaintenanceController.swift; sourceTree = "<group>"; };
 		371C28D52476C34D00D46DD2 /* MaintenanceSupportingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaintenanceSupportingCoordinator.swift; sourceTree = "<group>"; };
@@ -362,9 +376,9 @@
 		37689F80246A918600D99BC4 /* ReCaptchaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaManager.swift; sourceTree = "<group>"; };
 		37689F84246AE49700D99BC4 /* strings-es.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "strings-es.json"; sourceTree = "<group>"; };
 		37689F86246AE4B200D99BC4 /* privacy-es.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "privacy-es.json"; sourceTree = "<group>"; };
+		37689F8A246AF2DE00D99BC4 /* app.stopcovid.gouv.fr.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = app.stopcovid.gouv.fr.pem; sourceTree = "<group>"; };
 		37689F8E246AF31800D99BC4 /* Certificates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Certificates.swift; sourceTree = "<group>"; };
 		37689F92246BCFE900D99BC4 /* NSError+RBExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSError+RBExtension.swift"; sourceTree = "<group>"; };
-		37689F97246BF15B00D99BC4 /* device_parameters_correction.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = device_parameters_correction.json; sourceTree = "<group>"; };
 		37689FBB246BFBAE00D99BC4 /* swiftgen.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = SOURCE_ROOT; };
 		3768A096246D26A800D99BC4 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3768A098246D26BB00D99BC4 /* pt-PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-PT"; path = "pt-PT.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -414,6 +428,10 @@
 		37A7FB942447251000A4B99E /* RemoteFileSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFileSyncManager.swift; sourceTree = "<group>"; };
 		37A7FB962447356900A4B99E /* UIBarButtonItem+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extension.swift"; sourceTree = "<group>"; };
 		37A7FB9924473C9900A4B99E /* InteractivePopGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractivePopGestureRecognizer.swift; sourceTree = "<group>"; };
+		37AC2F13247E700200AE2B13 /* RBECKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBECKeys.swift; sourceTree = "<group>"; };
+		37AC2F15247E781700AE2B13 /* SecKey+RBExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SecKey+RBExtension.swift"; sourceTree = "<group>"; };
+		37AC2F21247EA03700AE2B13 /* RBEpochKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBEpochKey.swift; sourceTree = "<group>"; };
+		37AC2F24247EB5E500AE2B13 /* api.stopcovid.gouv.fr.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = api.stopcovid.gouv.fr.pem; sourceTree = "<group>"; };
 		37AD4071246437ED005FD22B /* UIPopoverPresentationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIPopoverPresentationController+Extension.swift"; sourceTree = "<group>"; };
 		37B0231624595ADF002281E9 /* RobertSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RobertSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		37B0231824595ADF002281E9 /* RobertSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobertSDK.h; sourceTree = "<group>"; };
@@ -424,11 +442,17 @@
 		37B0233524597558002281E9 /* RBStatusMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBStatusMessage.swift; sourceTree = "<group>"; };
 		37B02344245AA892002281E9 /* BluetoothManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothManager.swift; sourceTree = "<group>"; };
 		37B02346245AA900002281E9 /* RBBluetooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBBluetooth.swift; sourceTree = "<group>"; };
-		37B02349245AABCF002281E9 /* BluetoothConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothConstants.swift; sourceTree = "<group>"; };
-		37B0234B245AAD67002281E9 /* BluetoothAuthorizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothAuthorizationManager.swift; sourceTree = "<group>"; };
+		37B0234B245AAD67002281E9 /* BluetoothStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothStateManager.swift; sourceTree = "<group>"; };
 		37B854932476DD880007709F /* SickBlockingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SickBlockingCoordinator.swift; sourceTree = "<group>"; };
+		37C772C92481195C00B01BAE /* RBCryptoKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBCryptoKeys.swift; sourceTree = "<group>"; };
+		37C772D424816D6F00B01BAE /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		37C772D524816D7900B01BAE /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		37C772D624816E3E00B01BAE /* strings-ar.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "strings-ar.json"; sourceTree = "<group>"; };
+		37C772D724816E3E00B01BAE /* strings-de.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "strings-de.json"; sourceTree = "<group>"; };
+		37C772DA24816ED200B01BAE /* privacy-ar.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "privacy-ar.json"; sourceTree = "<group>"; };
+		37C772DB24816ED200B01BAE /* privacy-de.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "privacy-de.json"; sourceTree = "<group>"; };
 		37D16F3E246D7C98009B3129 /* DeviceParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceParameters.swift; sourceTree = "<group>"; };
-		37D16F41246D7DA3009B3129 /* DeviceParametersManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceParametersManager.swift; sourceTree = "<group>"; };
+		37D16F41246D7DA3009B3129 /* ParametersManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersManager.swift; sourceTree = "<group>"; };
 		37D8F28E246475B4008E8005 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		37E1D2C6243F16A400A02E14 /* NotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsManager.swift; sourceTree = "<group>"; };
 		37E1D2C8243F1D2A00A02E14 /* StopCovid.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StopCovid.entitlements; sourceTree = "<group>"; };
@@ -438,8 +462,6 @@
 		37E657BD243DFA1B0089D8B3 /* OnboardingExplanationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingExplanationsController.swift; sourceTree = "<group>"; };
 		37E657C1243DFE490089D8B3 /* OnboardingWorkingStepCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OnboardingWorkingStepCell.xib; sourceTree = "<group>"; };
 		37E657C3243DFEA40089D8B3 /* OnboardingWorkingStepCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWorkingStepCell.swift; sourceTree = "<group>"; };
-		37F979BC2452130600CDA154 /* RBServerEpochKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBServerEpochKey.swift; sourceTree = "<group>"; };
-		37F979BF2452132E00CDA154 /* RBServerEpoch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBServerEpoch.swift; sourceTree = "<group>"; };
 		37F979C4245213B100CDA154 /* RBServerStatusResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBServerStatusResponse.swift; sourceTree = "<group>"; };
 		37F979C92452155300CDA154 /* RBServerStatusBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBServerStatusBody.swift; sourceTree = "<group>"; };
 		37F979CC2452158B00CDA154 /* RBConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RBConstants.swift; sourceTree = "<group>"; };
@@ -461,10 +483,12 @@
 		4B5F03816D34E3CD13DD066E /* Pods-StopCovidTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StopCovidTests.debug.xcconfig"; path = "Target Support Files/Pods-StopCovidTests/Pods-StopCovidTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5CDE710129696D187EDE917A /* Pods-StopCovidTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StopCovidTests.release.xcconfig"; path = "Target Support Files/Pods-StopCovidTests/Pods-StopCovidTests.release.xcconfig"; sourceTree = "<group>"; };
 		9C7C23D86C8D131C164CAADE /* Pods_StopCovidTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StopCovidTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B130EF6D37FCF486F81B6E07 /* Pods-RobertSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RobertSDK.debug.xcconfig"; path = "Target Support Files/Pods-RobertSDK/Pods-RobertSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		B4BE1575B546130D4659D7EF /* Pods-Proximity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Proximity.release.xcconfig"; path = "Target Support Files/Pods-Proximity/Pods-Proximity.release.xcconfig"; sourceTree = "<group>"; };
 		C01117CBDAA496FCDA4EAF90 /* Pods_COVID_19.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_COVID_19.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8E485151461F1AB8DEA151B /* Pods-COVID-19.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-COVID-19.release.xcconfig"; path = "Target Support Files/Pods-COVID-19/Pods-COVID-19.release.xcconfig"; sourceTree = "<group>"; };
 		D51D60BBFD0F346B7A35D9A2 /* Pods-COVID-19.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-COVID-19.debug.xcconfig"; path = "Target Support Files/Pods-COVID-19/Pods-COVID-19.debug.xcconfig"; sourceTree = "<group>"; };
+		DFDA4D3378410AAC7FAD02F1 /* Pods-RobertSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RobertSDK.release.xcconfig"; path = "Target Support Files/Pods-RobertSDK/Pods-RobertSDK.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,6 +506,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C67476FB3395F72144291F30 /* Pods_RobertSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +521,8 @@
 				37013DF0243F5E3D00FCB360 /* strings-en.json */,
 				37689F84246AE49700D99BC4 /* strings-es.json */,
 				37013DF1243F5E3D00FCB360 /* strings-fr.json */,
+				37C772D624816E3E00B01BAE /* strings-ar.json */,
+				37C772D724816E3E00B01BAE /* strings-de.json */,
 			);
 			path = Strings;
 			sourceTree = "<group>";
@@ -569,6 +596,16 @@
 			path = BottomMessageContainer;
 			sourceTree = "<group>";
 		};
+		371C28C82475532F00D46DD2 /* Keys */ = {
+			isa = PBXGroup;
+			children = (
+				371C28CA2475533F00D46DD2 /* RBKeysManager.swift */,
+				37AC2F13247E700200AE2B13 /* RBECKeys.swift */,
+				37C772C92481195C00B01BAE /* RBCryptoKeys.swift */,
+			);
+			path = Keys;
+			sourceTree = "<group>";
+		};
 		371C28D22476BD0E00D46DD2 /* Maintenance */ = {
 			isa = PBXGroup;
 			children = (
@@ -622,6 +659,8 @@
 		373A344A243E235500148FCF /* Privacy */ = {
 			isa = PBXGroup;
 			children = (
+				37C772DA24816ED200B01BAE /* privacy-ar.json */,
+				37C772DB24816ED200B01BAE /* privacy-de.json */,
 				3768A09A246D276F00D99BC4 /* privacy-it.json */,
 				3768A09B246D276F00D99BC4 /* privacy-pt.json */,
 				373A3456243E252F00148FCF /* privacy-en.json */,
@@ -823,15 +862,16 @@
 		37663C97243CC733009F1D98 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				37689F7F246A917300D99BC4 /* ReCaptcha */,
 				37B02343245AA87F002281E9 /* Bluetooth */,
+				3741A4D42472666800DC7EC2 /* CameraAuthorization */,
+				37A00FF32475018E006DC3C5 /* Maintenance */,
+				37E1D2C4243F167500A02E14 /* Notifications */,
+				373A347C243EE56F00148FCF /* OrientationManager */,
+				37C772B1247FE3B600B01BAE /* Params */,
+				37689F7F246A917300D99BC4 /* ReCaptcha */,
+				37A7FB93244724DE00A4B99E /* RemoteFileSync */,
 				37F979BA245212CA00CDA154 /* Server */,
 				37F979ED24521CA600CDA154 /* Storage */,
-				37A00FF32475018E006DC3C5 /* Maintenance */,
-				37A7FB93244724DE00A4B99E /* RemoteFileSync */,
-				37E1D2C4243F167500A02E14 /* Notifications */,
-				3741A4D42472666800DC7EC2 /* CameraAuthorization */,
-				373A347C243EE56F00148FCF /* OrientationManager */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -1145,8 +1185,18 @@
 			isa = PBXGroup;
 			children = (
 				37689F8E246AF31800D99BC4 /* Certificates.swift */,
+				37689F90246AF31F00D99BC4 /* Files */,
 			);
 			path = Certificates;
+			sourceTree = "<group>";
+		};
+		37689F90246AF31F00D99BC4 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				37689F8A246AF2DE00D99BC4 /* app.stopcovid.gouv.fr.pem */,
+				37AC2F24247EB5E500AE2B13 /* api.stopcovid.gouv.fr.pem */,
+			);
+			path = Files;
 			sourceTree = "<group>";
 		};
 		376928032460107400310876 /* Cell */ = {
@@ -1338,6 +1388,7 @@
 				374840A02456C12B00032061 /* RBManager.swift */,
 				374840A92456C18000032061 /* Protocols */,
 				37F979BB245212CE00CDA154 /* Model */,
+				371C28C82475532F00D46DD2 /* Keys */,
 				37F979DF245219B100CDA154 /* Message */,
 				37F979CF245215B600CDA154 /* Extensions */,
 			);
@@ -1350,6 +1401,7 @@
 				C01117CBDAA496FCDA4EAF90 /* Pods_COVID_19.framework */,
 				9C7C23D86C8D131C164CAADE /* Pods_StopCovidTests.framework */,
 				3A65D27D95992A7AB7C924E2 /* Pods_Proximity.framework */,
+				2DA02CBEDACA215063614C6F /* Pods_RobertSDK.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1357,19 +1409,25 @@
 		37B02343245AA87F002281E9 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				37B02349245AABCF002281E9 /* BluetoothConstants.swift */,
 				37B02344245AA892002281E9 /* BluetoothManager.swift */,
-				37B0234B245AAD67002281E9 /* BluetoothAuthorizationManager.swift */,
-				37D16F41246D7DA3009B3129 /* DeviceParametersManager.swift */,
-				37D16F3E246D7C98009B3129 /* DeviceParameters.swift */,
-				37689F97246BF15B00D99BC4 /* device_parameters_correction.json */,
+				37B0234B245AAD67002281E9 /* BluetoothStateManager.swift */,
 			);
 			path = Bluetooth;
+			sourceTree = "<group>";
+		};
+		37C772B1247FE3B600B01BAE /* Params */ = {
+			isa = PBXGroup;
+			children = (
+				37D16F41246D7DA3009B3129 /* ParametersManager.swift */,
+				37D16F3E246D7C98009B3129 /* DeviceParameters.swift */,
+			);
+			path = Params;
 			sourceTree = "<group>";
 		};
 		37E1D2C4243F167500A02E14 /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				3712727C247E5B02004DD969 /* NotificationsConstant.swift */,
 				37E1D2C6243F16A400A02E14 /* NotificationsManager.swift */,
 			);
 			path = Notifications;
@@ -1408,6 +1466,7 @@
 			children = (
 				37F97A07245232B100CDA154 /* RBStorable.swift */,
 				37F97A04245231BC00CDA154 /* RBEpoch.swift */,
+				37AC2F21247EA03700AE2B13 /* RBEpochKey.swift */,
 				37B0232F2459658A002281E9 /* RBLocalProximity.swift */,
 				378A26E02462FCA2000F2FD8 /* RBReceivedProximity.swift */,
 				37B0232C24595DDD002281E9 /* RBRegisterResponse.swift */,
@@ -1422,8 +1481,6 @@
 		37F979C22452137600CDA154 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				37F979BF2452132E00CDA154 /* RBServerEpoch.swift */,
-				37F979BC2452130600CDA154 /* RBServerEpochKey.swift */,
 				37F979DC2452199800CDA154 /* RBServerContact.swift */,
 				37F979E024521A6400CDA154 /* RBServerContactId.swift */,
 				37F979C82452153D00CDA154 /* Bodies */,
@@ -1462,6 +1519,8 @@
 				37F979D0245215CB00CDA154 /* Date+RBExtension.swift */,
 				3791AD882456EB5800E735F9 /* Data+RBExtension.swift */,
 				37689F92246BCFE900D99BC4 /* NSError+RBExtension.swift */,
+				37127273247D4CA8004DD969 /* String+RBExtension.swift */,
+				37AC2F15247E781700AE2B13 /* SecKey+RBExtension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1493,6 +1552,8 @@
 				5CDE710129696D187EDE917A /* Pods-StopCovidTests.release.xcconfig */,
 				0DE9ACCB8FB4E5D7E45B027F /* Pods-Proximity.debug.xcconfig */,
 				B4BE1575B546130D4659D7EF /* Pods-Proximity.release.xcconfig */,
+				B130EF6D37FCF486F81B6E07 /* Pods-RobertSDK.debug.xcconfig */,
+				DFDA4D3378410AAC7FAD02F1 /* Pods-RobertSDK.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1538,6 +1599,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 37B0231F24595ADF002281E9 /* Build configuration list for PBXNativeTarget "RobertSDK" */;
 			buildPhases = (
+				AC8E6CD2A46D48EA498BDAB3 /* [CP] Check Pods Manifest.lock */,
 				37B0231124595ADF002281E9 /* Headers */,
 				37B0231224595ADF002281E9 /* Sources */,
 				37B0231324595ADF002281E9 /* Frameworks */,
@@ -1578,6 +1640,8 @@
 				es,
 				it,
 				"pt-PT",
+				ar,
+				de,
 			);
 			mainGroup = 37663C75243CC672009F1D98;
 			productRefGroup = 37663C7F243CC672009F1D98 /* Products */;
@@ -1621,17 +1685,21 @@
 				372527722446F66E007A2054 /* CVNavigationChild.storyboard in Resources */,
 				37014CFA24460CD000CE0BF1 /* OnboardingGovernmentCell.xib in Resources */,
 				37692807246010B200310876 /* SickStateHeaderCell.xib in Resources */,
-				37689F98246BF15C00D99BC4 /* device_parameters_correction.json in Resources */,
 				37689F85246AE49700D99BC4 /* strings-es.json in Resources */,
+				37C772D924816E3E00B01BAE /* strings-de.json in Resources */,
 				371134B02472A6C700E70547 /* Marianne-Bold.otf in Resources */,
 				3768A0A0246D278A00D99BC4 /* strings-it.json in Resources */,
 				3769280D24603A6A00310876 /* CenteredImageTextCell.xib in Resources */,
+				37C772D824816E3E00B01BAE /* strings-ar.json in Resources */,
 				3768A09D246D276F00D99BC4 /* privacy-pt.json in Resources */,
+				37C772DD24816ED200B01BAE /* privacy-de.json in Resources */,
 				37014CFB24460CD000CE0BF1 /* InfoPlist.strings in Resources */,
+				37689F8B246AF2DE00D99BC4 /* app.stopcovid.gouv.fr.pem in Resources */,
 				371134B12472A6C700E70547 /* Marianne-ExtraBold.otf in Resources */,
 				37014CFC24460CD000CE0BF1 /* OnboardingWorkingStepCell.xib in Resources */,
 				37014CFD24460CD000CE0BF1 /* strings-en.json in Resources */,
 				3768A0A1246D278A00D99BC4 /* strings-pt.json in Resources */,
+				37C772DC24816ED200B01BAE /* privacy-ar.json in Resources */,
 				37014CFE24460CD000CE0BF1 /* privacy-fr.json in Resources */,
 				37014CFF24460CD000CE0BF1 /* FlashCode.storyboard in Resources */,
 				37014D0024460CD000CE0BF1 /* SwitchCell.xib in Resources */,
@@ -1657,6 +1725,7 @@
 				37014D1124460CD000CE0BF1 /* BottomMessageContainer.storyboard in Resources */,
 				37014D1224460CD000CE0BF1 /* ButtonCell.xib in Resources */,
 				37014D1324460CD000CE0BF1 /* SF-Pro-Text-Bold.otf in Resources */,
+				37AC2F26247EB5E500AE2B13 /* api.stopcovid.gouv.fr.pem in Resources */,
 				37014D1424460CD000CE0BF1 /* OnboardingGestureCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1687,7 +1756,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "swiftgen config run --config swiftgen.yml\n";
+			shellScript = "$PODS_ROOT/SwiftGen/bin/swiftgen config run --config swiftgen.yml\n";
 		};
 		5227198B8DEE415790E1653E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1728,6 +1797,28 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-COVID-19/Pods-COVID-19-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		AC8E6CD2A46D48EA498BDAB3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-RobertSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1744,7 +1835,6 @@
 				37D8F28F246475B4008E8005 /* Data+Extension.swift in Sources */,
 				37014CA324460CD000CE0BF1 /* UIViewController+Extension.swift in Sources */,
 				37014CA424460CD000CE0BF1 /* LocalizationsManager.swift in Sources */,
-				37D16F42246D7DA3009B3129 /* DeviceParametersManager.swift in Sources */,
 				37014CA524460CD000CE0BF1 /* RootCoordinator.swift in Sources */,
 				37A7FB9B24473C9900A4B99E /* InteractivePopGestureRecognizer.swift in Sources */,
 				37014CA624460CD000CE0BF1 /* Appearance.swift in Sources */,
@@ -1778,7 +1868,6 @@
 				37014CB924460CD000CE0BF1 /* BottomButtonContainerController.swift in Sources */,
 				37014CBA24460CD000CE0BF1 /* CVRow.swift in Sources */,
 				37014CBC24460CD000CE0BF1 /* SharingCoordinator.swift in Sources */,
-				37D16F3F246D7C98009B3129 /* DeviceParameters.swift in Sources */,
 				3741A4D62472668600DC7EC2 /* CameraAuthorizationManager.swift in Sources */,
 				378A26A72461BD6D000F2FD8 /* CallCenterRegion.swift in Sources */,
 				37F979DB245218A300CDA154 /* RBServerReportBody.swift in Sources */,
@@ -1794,6 +1883,7 @@
 				37014CC124460CD000CE0BF1 /* MainTabBarController.swift in Sources */,
 				37014CC224460CD000CE0BF1 /* Coordinator.swift in Sources */,
 				37014CC324460CD000CE0BF1 /* FileManager+Extension.swift in Sources */,
+				37C772BA2480027C00B01BAE /* DeviceParameters.swift in Sources */,
 				37014CC424460CD000CE0BF1 /* FlashCodeCoordinator.swift in Sources */,
 				378A269C2461A7A4000F2FD8 /* ManageDataController.swift in Sources */,
 				379583012448A47100E8467B /* OnboardingImageCell.swift in Sources */,
@@ -1802,7 +1892,6 @@
 				37014CC624460CD000CE0BF1 /* QRScannerView.swift in Sources */,
 				376928092460242800310876 /* Date+Extension.swift in Sources */,
 				37A00FF724750471006DC3C5 /* MaintenanceInfo.swift in Sources */,
-				37F979BE2452130600CDA154 /* RBServerEpochKey.swift in Sources */,
 				37014CC824460CD000CE0BF1 /* UIApplication+Extension.swift in Sources */,
 				37014CC924460CD000CE0BF1 /* CVTableViewCell.swift in Sources */,
 				37014CCB24460CD000CE0BF1 /* TextFieldCell.swift in Sources */,
@@ -1834,16 +1923,17 @@
 				371C28D92476C48F00D46DD2 /* AppMaintenanceCoordinator.swift in Sources */,
 				37014CDE24460CD000CE0BF1 /* InformationController.swift in Sources */,
 				37014CDF24460CD000CE0BF1 /* CVRow+Extension.swift in Sources */,
-				37B0234C245AAD67002281E9 /* BluetoothAuthorizationManager.swift in Sources */,
+				37B0234C245AAD67002281E9 /* BluetoothStateManager.swift in Sources */,
 				37014CE124460CD000CE0BF1 /* AboutCoordinator.swift in Sources */,
 				37014CE224460CD000CE0BF1 /* CVNavigationController.swift in Sources */,
-				37F979C12452132E00CDA154 /* RBServerEpoch.swift in Sources */,
+				37C772B92480027C00B01BAE /* ParametersManager.swift in Sources */,
 				37014CE324460CD000CE0BF1 /* UIFont+Appearance.swift in Sources */,
 				37014CE424460CD000CE0BF1 /* OnboardingWelcomeController.swift in Sources */,
 				37014CE524460CD000CE0BF1 /* OnboardingProximityController.swift in Sources */,
 				37F979C6245213B100CDA154 /* RBServerStatusResponse.swift in Sources */,
 				37014CE724460CD000CE0BF1 /* SickCoordinator.swift in Sources */,
 				3741A4D12472573600DC7EC2 /* RemoteFileConstant.swift in Sources */,
+				3712727D247E5B02004DD969 /* NotificationsConstant.swift in Sources */,
 				37014CE824460CD000CE0BF1 /* CVNavigationChildController.swift in Sources */,
 				37014CE924460CD000CE0BF1 /* CVButton.swift in Sources */,
 				37014CEA24460CD000CE0BF1 /* Link.swift in Sources */,
@@ -1866,7 +1956,6 @@
 				37014CF524460CD000CE0BF1 /* OnboardingCoordinator.swift in Sources */,
 				37014CF624460CD000CE0BF1 /* GradientView.swift in Sources */,
 				3741A4D92472738100DC7EC2 /* ReCaptchaController.swift in Sources */,
-				37B0234A245AABCF002281E9 /* BluetoothConstants.swift in Sources */,
 				37014CF724460CD000CE0BF1 /* AboutController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1878,14 +1967,19 @@
 				37B02334245965FB002281E9 /* RBStatusResponse.swift in Sources */,
 				378A26EB2463EC1A000F2FD8 /* RBUnregisterMessage.swift in Sources */,
 				37B0233724597558002281E9 /* RBStatusMessage.swift in Sources */,
+				37127274247D4CA8004DD969 /* String+RBExtension.swift in Sources */,
 				37B0232724595AFE002281E9 /* RBStorable.swift in Sources */,
+				37AC2F22247EA03700AE2B13 /* RBEpochKey.swift in Sources */,
 				37B0232524595AFE002281E9 /* RBServer.swift in Sources */,
 				37B0232624595AFE002281E9 /* RBStorage.swift in Sources */,
+				37AC2F14247E700200AE2B13 /* RBECKeys.swift in Sources */,
 				37689F95246BD01200D99BC4 /* RBReceivedProximity.swift in Sources */,
 				37B0232A24595AFE002281E9 /* Date+RBExtension.swift in Sources */,
+				37AC2F16247E781700AE2B13 /* SecKey+RBExtension.swift in Sources */,
 				37B0232324595AFE002281E9 /* RBConstants.swift in Sources */,
 				37B0232E24595DDD002281E9 /* RBRegisterResponse.swift in Sources */,
 				37689F94246BCFE900D99BC4 /* NSError+RBExtension.swift in Sources */,
+				371C28CB2475533F00D46DD2 /* RBKeysManager.swift in Sources */,
 				378A26EA2463EC1A000F2FD8 /* RBDeleteExposureHistoryMessage.swift in Sources */,
 				37B02348245AA902002281E9 /* RBBluetooth.swift in Sources */,
 				37B0232924595AFE002281E9 /* RBMessageGenerator.swift in Sources */,
@@ -1893,6 +1987,7 @@
 				378A26C72462B210000F2FD8 /* RBMessageParser.swift in Sources */,
 				37B0232824595AFE002281E9 /* RBEpoch.swift in Sources */,
 				37B023312459658A002281E9 /* RBLocalProximity.swift in Sources */,
+				37C772CA2481195C00B01BAE /* RBCryptoKeys.swift in Sources */,
 				37B0232B24595AFE002281E9 /* Data+RBExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1921,6 +2016,8 @@
 				37689F7E246A8FA000D99BC4 /* es */,
 				3768A096246D26A800D99BC4 /* it */,
 				3768A098246D26BB00D99BC4 /* pt-PT */,
+				37C772D424816D6F00B01BAE /* ar */,
+				37C772D524816D7900B01BAE /* de */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1944,7 +2041,7 @@
 				CODE_SIGN_ENTITLEMENTS = "COVID-19/StopCovid.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = PR958DC548;
 				INFOPLIST_FILE = "COVID-19/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
@@ -1968,7 +2065,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "COVID-19/StopCovid.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = PR958DC548;
 				INFOPLIST_FILE = "COVID-19/Resources/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.4;
@@ -2103,6 +2200,7 @@
 		};
 		37B0232024595ADF002281E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B130EF6D37FCF486F81B6E07 /* Pods-RobertSDK.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2131,6 +2229,7 @@
 		};
 		37B0232124595ADF002281E9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DFDA4D3378410AAC7FAD02F1 /* Pods-RobertSDK.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

@@ -12,6 +12,7 @@ import Foundation
 
 struct RBServerUnregisterBody: RBServerBody {
 
+    var epochId: Int
     var ebid: String
     var time: String
     var mac: String

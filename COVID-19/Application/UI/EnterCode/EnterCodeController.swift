@@ -59,9 +59,12 @@ final class EnterCodeController: CVTableViewController {
                                    subtitle: "enterCodeController.mainMessage.subtitle".localized,
                                    xibName: .textCell,
                                    theme: CVRow.Theme(topInset: 0.0))
-        let textFieldRow: CVRow = CVRow(title: "enterCodeController.textField.placeholder".localized,
+        let textFieldRow: CVRow = CVRow(placeholder: "enterCodeController.textField.placeholder".localized,
                                         xibName: .textFieldCell,
-                                        theme: CVRow.Theme(topInset: 30.0, separatorLeftInset: Appearance.Cell.leftMargin, separatorRightInset: Appearance.Cell.leftMargin),
+                                        theme: CVRow.Theme(topInset: 30.0,
+                                                           placeholderColor: .lightGray,
+                                                           separatorLeftInset: Appearance.Cell.leftMargin,
+                                                           separatorRightInset: Appearance.Cell.leftMargin),
                                         textFieldKeyboardType: .default,
                                         willDisplay: { [weak self] cell in
                                             self?.textField = (cell as? TextFieldCell)?.cvTextField

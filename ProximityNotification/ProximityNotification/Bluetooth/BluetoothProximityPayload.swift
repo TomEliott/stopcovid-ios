@@ -16,14 +16,20 @@ struct BluetoothProximityPayload {
     
     let payload: ProximityPayload
     
+    var version: Int8 {
+        return Int8(bitPattern: data[16])
+    }
+    
     var txPowerLevel: Int8 {
         return Int8(bitPattern: data[17])
     }
     
     static let byteCount = ProximityPayload.byteCount + 2
     
+    static let currentVersion = Int8(1)
+    
     init(payload: ProximityPayload, txPowerLevel: Int8) {
-        let metadataBytes: [Int8] = [0, txPowerLevel]
+        let metadataBytes = [BluetoothProximityPayload.currentVersion, txPowerLevel]
         let metadata = Data(metadataBytes.map { UInt8(bitPattern: $0) })
         self.data = payload.data + metadata
         self.payload = payload

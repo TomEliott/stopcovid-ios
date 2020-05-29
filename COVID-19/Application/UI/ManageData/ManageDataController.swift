@@ -116,8 +116,8 @@ final class ManageDataController: CVTableViewController {
                   okTitle: "common.yes".localized,
                   isOkDestructive: true,
                   cancelTitle: "common.no".localized) { [weak self] in
-                    RBManager.shared.clearLocalProximityList()
-                    self?.showFlash()
+            RBManager.shared.clearLocalProximityList()
+            self?.showFlash()
         }
     }
     
@@ -127,15 +127,19 @@ final class ManageDataController: CVTableViewController {
                   okTitle: "common.yes".localized,
                   isOkDestructive: true,
                   cancelTitle: "common.no".localized) { [weak self] in
-                    HUD.show(.progress)
-                    RBManager.shared.deleteExposureHistory { error in
-                        HUD.hide()
-                        if let error = error {
-                            self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
-                        } else {
-                            self?.showFlash()
-                        }
+            if RBManager.shared.isRegistered {
+                HUD.show(.progress)
+                RBManager.shared.deleteExposureHistory { error in
+                    HUD.hide()
+                    if let error = error {
+                        self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
+                    } else {
+                        self?.showFlash()
                     }
+                }
+            } else {
+                self?.showFlash()
+            }
         }
     }
     
@@ -145,8 +149,8 @@ final class ManageDataController: CVTableViewController {
                   okTitle: "common.yes".localized,
                   isOkDestructive: true,
                   cancelTitle: "common.no".localized) { [weak self] in
-                    RBManager.shared.clearAtRiskAlert()
-                    self?.showFlash()
+            RBManager.shared.clearAtRiskAlert()
+            self?.showFlash()
         }
     }
     
@@ -162,7 +166,7 @@ final class ManageDataController: CVTableViewController {
                 if let error = error {
                     self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
                 } else {
-                    UserDefaults.standard.removeObject(forKey: "isOnboardingDone")
+                    ParametersManager.shared.clearConfig()
                     NotificationCenter.default.post(name: .changeAppState, object: RootCoordinator.State.onboarding, userInfo: nil)
                 }
             }

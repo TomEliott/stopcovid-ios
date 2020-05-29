@@ -71,7 +71,7 @@ final class SendHistoryController: CVTableViewController {
     
     private func sendButtonPressed() {
         HUD.show(.progress)
-        RBManager.shared.report(code: symptomsParams.code) { error in
+        RBManager.shared.report(code: symptomsParams.code, symptomsOrigin: symptomsParams.date) { error in
             HUD.hide()
             if error != nil {
                 self.showAlert(title: "sendHistoryController.alert.invalidCode.title".localized,
@@ -82,8 +82,11 @@ final class SendHistoryController: CVTableViewController {
                 })
                 self.bottomButtonContainerController?.unlockButtons()
             } else {
-                self.showFlash()
-                self.dismissBlock()
+                RBManager.shared.unregister { error in
+                    ParametersManager.shared.clearConfig()
+                    RBManager.shared.isSick = true
+                    self.dismissBlock()
+                }
             }
         }
     }

@@ -35,35 +35,51 @@ final class NotificationsManager: NSObject, UNUserNotificationCenterDelegate {
             }
         })
     }
-
-    func isNotificationsStatusNotDetermined(completion: @escaping (_ notDetermined: Bool) -> ()) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
-                completion(settings.authorizationStatus == .notDetermined)
-            }
-        }
-    }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.alert, .badge, .sound])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if response.notification.request.identifier == "TestAtRiskNotification" {
+        if response.notification.request.identifier == NotificationsContant.Identifier.atRisk {
+            UIApplication.shared.clearBadge()
             NotificationCenter.default.post(name: .didTouchAtRiskNotification, object: nil)
         }
         completionHandler()
     }
     
-    func scheduleAtRiskNotification() {
+    func scheduleAtRiskNotification(minHour: Int?, maxHour: Int?) {
         let content = UNMutableNotificationContent()
         content.title = "notification.atRisk.title".localized
         content.body = "notification.atRisk.message".localized
-        content.sound = UNNotificationSound.default
+        content.sound = .default
         content.badge = 1
-        let identifier: String = "TestAtRiskNotification"
-        let request: UNNotificationRequest = UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        let now: Date = Date()
+        var triggerDate: Date = now
+        if let minHour = minHour, let maxHour = maxHour {
+            var components: DateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: now)
+            guard let hour = components.hour else { return }
+            if hour < minHour {
+                components.hour = minHour
+                components.minute = 0
+                components.second = 0
+                if let date = Calendar.current.date(from: components) {
+                    triggerDate = date
+                }
+            } else if hour > maxHour {
+                components.hour = minHour
+                components.minute = 0
+                components.second = 0
+                if let date = Calendar.current.date(from: components)?.dateByAddingDays(1) {
+                    triggerDate = date
+                }
+            }
+        }
+        let delay: Double = max(triggerDate.timeIntervalSince1970 - now.timeIntervalSince1970, 0.0)
+        let trigger: UNTimeIntervalNotificationTrigger? = delay == 0 ? nil : UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
+        let request: UNNotificationRequest = UNNotificationRequest(identifier: NotificationsContant.Identifier.atRisk, content: content, trigger: trigger)
         requestAuthorization { _ in
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
             UNUserNotificationCenter.current().add(request) { _ in }
         }
     }

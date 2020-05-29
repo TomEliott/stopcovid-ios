@@ -27,6 +27,15 @@ final class MainTabBarCoordinator: WindowedCoordinator {
         removeObservers()
     }
     
+    func createWindow(for controller: UIViewController) {
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.backgroundColor = .clear
+        window?.rootViewController = controller
+        window?.accessibilityViewIsModal = true
+        window?.alpha = 0.0
+        window?.makeKeyAndVisible()
+    }
+    
     private func start() {
         let mainTabBarController: MainTabBarController = MainTabBarController()
         mainTabBarController.configureTabBarAppearance()
@@ -52,9 +61,10 @@ final class MainTabBarCoordinator: WindowedCoordinator {
     }
     
     private func showInformation() {
-        let informationCoordinator: InformationCoordinator = InformationCoordinator(presentingController: tabBarController, parent: self)
+        let informationCoordinator: InformationCoordinator = InformationCoordinator(presentingController: tabBarController?.topPresentedController, parent: self)
         addChild(coordinator: informationCoordinator)
     }
+    
 }
 
 // MARK: - Notifications -

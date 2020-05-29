@@ -13,5 +13,6 @@ import Foundation
 struct RBServerRegisterBody: RBServerBody {
 
     var captcha: String
+    var clientPublicECDHKey: String
     
 }

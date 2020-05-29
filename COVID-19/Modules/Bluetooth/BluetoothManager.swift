@@ -16,23 +16,15 @@ final class BluetoothManager: RBBluetooth {
     
     private var service: ProximityNotificationService?
     
-    private var serviceUUID: String!
-    private var characteristicUUID: String!
-    
-    init(serviceUUID: String, characteristicUUID: String) {
-        self.serviceUUID = serviceUUID
-        self.characteristicUUID = characteristicUUID
-    }
-    
     func start(helloMessageCreationHandler: @escaping (_ completion: @escaping (_ data: Data?) -> ()) -> (),
                ebidExtractionHandler: @escaping (_ data: Data) -> Data,
                didReceiveProximity: @escaping (_ proximity: RBReceivedProximity) -> ()) {
-        
-        let deviceParameters: DeviceParameters? = DeviceParametersManager.getDeviceParametersFor(model: UIDevice.current.model)
-        let bleSettings = BluetoothSettings(serviceUniqueIdentifier: serviceUUID,
-                                            serviceCharacteristicUniqueIdentifier: characteristicUUID,
-                                            txCompensationGain: Int8(deviceParameters?.txFactor ?? 0.0),
-                                            rxCompensationGain: Int8(deviceParameters?.rxFactor ?? 0.0))
+        guard let serviceUuid = ParametersManager.shared.bleServiceUuid, let characteristicUuid = ParametersManager.shared.bleCharacteristicUuid else { return }
+        let deviceParams: DeviceParameters? = ParametersManager.shared.getDeviceParametersFor(model: UIDevice.current.model)
+        let bleSettings = BluetoothSettings(serviceUniqueIdentifier: serviceUuid,
+                                            serviceCharacteristicUniqueIdentifier: characteristicUuid,
+                                            txCompensationGain: Int8(deviceParams?.txFactor ?? 0.0),
+                                            rxCompensationGain: Int8(deviceParams?.rxFactor ?? 0.0))
         let stateChangedHandler: StateChangedHandler = { _ in }
         service = ProximityNotificationService(settings: ProximityNotificationSettings(bluetoothSettings: bleSettings),
                                                stateChangedHandler: stateChangedHandler)

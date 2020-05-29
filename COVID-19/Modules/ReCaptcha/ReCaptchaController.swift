@@ -12,7 +12,7 @@
 import UIKit
 import WebKit
 
-final class ReCaptchaController: UIViewController {
+final class ReCaptchaController: UIViewController, WKNavigationDelegate {
     
     let containerView: UIView = UIView()
     private var mainView: UIView = UIView()
@@ -39,6 +39,7 @@ final class ReCaptchaController: UIViewController {
     }
     
     deinit {
+        print("\(type(of: self)) deallocated")
         webView?.scrollView.delegate = nil
     }
     
@@ -88,6 +89,7 @@ final class ReCaptchaController: UIViewController {
         webView.scrollView.showsHorizontalScrollIndicator = false
         webView.scrollView.isScrollEnabled = false
         webView.scrollView.isPagingEnabled = false
+        webView.navigationDelegate = self
         fetchWebViewComponentSize(webView: webView) { size in
             self.setupSize(size ?? self.defaultRecaptchaSize)
         }
@@ -153,6 +155,17 @@ final class ReCaptchaController: UIViewController {
     
     @objc private func cancelButtonPressed() {
         dismiss()
+    }
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        print("☠️☠️☠️")
+        if let host = navigationAction.request.url?.host {
+            if host == "www.google.com" {
+                decisionHandler(.allow)
+                return
+            }
+        }
+        decisionHandler(.cancel)
     }
     
 }

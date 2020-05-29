@@ -11,12 +11,12 @@ public struct RBStatusResponse {
 
     let atRisk: Bool
     let lastExposureTimeFrame: Int?
-    let epochs: [RBEpoch]
+    let tuples: String
     
-    public init(atRisk: Bool, lastExposureTimeFrame: Int?, epochs: [RBEpoch]) {
+    public init(atRisk: Bool, lastExposureTimeFrame: Int?, tuples: String) {
         self.atRisk = atRisk
         self.lastExposureTimeFrame = lastExposureTimeFrame
-        self.epochs = epochs
+        self.tuples = tuples
     }
     
 }

@@ -12,9 +12,7 @@ import UIKit
 
 struct RBServerRegisterResponse: RBServerResponse {
 
-    var key: String
-    var message: String?
-    var idsForEpochs: [RBServerEpoch]
+    var tuples: String
     var timeStart: Int
 
 }

@@ -23,7 +23,8 @@ final class InteractivePopGestureRecognizer: NSObject, UIGestureRecognizerDelega
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        // This is to prevent tableView to be scrolled when the navigation controller swipe gesture is used.
+        return !"\(type(of: otherGestureRecognizer))".hasPrefix("UIScrollViewPan")
     }
     
 }

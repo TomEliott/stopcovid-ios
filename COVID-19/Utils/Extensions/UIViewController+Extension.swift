@@ -13,6 +13,14 @@ import PKHUD
 
 extension UIViewController {
     
+    var topPresentedController: UIViewController {
+        var presentedController: UIViewController = self
+        while let controller = presentedController.presentedViewController {
+            presentedController = controller
+        }
+        return presentedController
+    }
+    
     func addChildViewController(_ childController: UIViewController, containerView: UIView) {
         addChild(childController)
         let childView: UIView = childController.view

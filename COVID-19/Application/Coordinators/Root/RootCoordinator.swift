@@ -29,7 +29,7 @@ final class RootCoordinator: Coordinator {
     private var lastBrightnessLevel: CGFloat = UIScreen.main.brightness
     private var isPowerSaveMode: Bool = false
     
-    @UserDefault(key: "isOnboardingDone")
+    @UserDefault(key: .isOnboardingDone)
     private var isOnboardingDone: Bool = false
     
     func start() {
@@ -107,6 +107,9 @@ extension RootCoordinator {
     
     @objc private func changeAppStateNotification(_ notification: Notification) {
         guard let state = notification.object as? State else { return }
+        if state == .onboarding {
+            isOnboardingDone = false
+        }
         switchTo(state: state)
     }
     

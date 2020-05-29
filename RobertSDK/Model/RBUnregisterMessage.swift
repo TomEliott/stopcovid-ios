@@ -12,6 +12,7 @@ import UIKit
 
 public struct RBUnregisterMessage {
 
+    let epochId: Int
     let ebid: String
     let time: String
     let mac: String

@@ -18,7 +18,8 @@ final class StorageManager: RBStorage {
     enum KeychainKey: String, CaseIterable {
         case dbKey
         case epochTimeStart
-        case key
+        case ka
+        case kea
         case proximityActivated
         case isAtRisk
         case lastExposureTimeFrame
@@ -29,14 +30,13 @@ final class StorageManager: RBStorage {
     
     let keychain: KeychainSwift = KeychainSwift(keyPrefix: "SC")
     private var realm: Realm?
-    private var dbKey: Data?
     
     func start() {
-        loadDbKey()
+        loadDb()
     }
     
     func stop() {
-        wipeDBKey()
+        realm = nil
     }
     
     // MARK: - Epoch -
@@ -66,7 +66,7 @@ final class StorageManager: RBStorage {
     
     func getLastEpoch() -> RBEpoch? {
         guard let realm = realm else { return nil }
-        return realm.objects(RealmEpoch.self).sorted { $0.id < $1.id }.last?.toRBEpoch()
+        return realm.objects(RealmEpoch.self).sorted { $0.epochId < $1.epochId }.last?.toRBEpoch()
     }
     
     // MARK: - TimeStart -
@@ -82,17 +82,25 @@ final class StorageManager: RBStorage {
         return timeStart
     }
     
-    // MARK: - Key -
-    func save(key: Data) {
-        keychain.set(key, forKey: KeychainKey.key.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
+    // MARK: - Keys -
+    func save(ka: Data) {
+        keychain.set(ka, forKey: KeychainKey.ka.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
     }
     
-    func getKey() -> Data? {
-        keychain.getData(KeychainKey.key.rawValue)
+    func getKa() -> Data? {
+        keychain.getData(KeychainKey.ka.rawValue)
     }
     
-    func isKeyStored() -> Bool {
-        keychain.getData(KeychainKey.key.rawValue) != nil
+    func save(kea: Data) {
+        keychain.set(kea, forKey: KeychainKey.kea.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
+    }
+    
+    func getKea() -> Data? {
+        keychain.getData(KeychainKey.kea.rawValue)
+    }
+    
+    func areKeysStored() -> Bool {
+        getKa() != nil && getKea() != nil
     }
     
     // MARK: - Local Proximity -
@@ -112,6 +120,24 @@ final class StorageManager: RBStorage {
         return realm.objects(RealmLocalProximity.self).map { $0.toRBLocalProximity() }
     }
     
+    func getLocalProximityList(from: Date, to: Date) -> [RBLocalProximity] {
+        guard let realm = realm else { return [] }
+        let proximities: [RealmLocalProximity] = [RealmLocalProximity](realm.objects(RealmLocalProximity.self))
+        let matchingProximities: [RealmLocalProximity] = proximities.filter { $0.timeCollectedOnDevice >= from.timeIntervalSince1900 && $0.timeCollectedOnDevice <= to.timeIntervalSince1900 }
+        return matchingProximities.map { $0.toRBLocalProximity() }
+    }
+    
+    func clearProximityList(before date: Date) {
+        guard let realm = realm else { return }
+        let proximities: [RealmLocalProximity] = [RealmLocalProximity](realm.objects(RealmLocalProximity.self))
+        let proximitiesToDelete: [RealmLocalProximity] = proximities.filter { $0.timeCollectedOnDevice < date.timeIntervalSince1900 }
+        if !proximitiesToDelete.isEmpty {
+            try! realm.write {
+                realm.delete(proximitiesToDelete)
+            }
+        }
+    }
+    
     // MARK: - Proximity -
     func save(proximityActivated: Bool) {
         keychain.set(proximityActivated, forKey: KeychainKey.proximityActivated.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
@@ -127,7 +153,7 @@ final class StorageManager: RBStorage {
         if let isAtRisk = isAtRisk {
             keychain.set(isAtRisk, forKey: KeychainKey.isAtRisk.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
             if isAtRisk {
-                NotificationsManager.shared.scheduleAtRiskNotification()
+                NotificationsManager.shared.scheduleAtRiskNotification(minHour: ParametersManager.shared.minHourContactNotif, maxHour: ParametersManager.shared.maxHourContactNotif)
             }
         } else {
             keychain.delete(KeychainKey.isAtRisk.rawValue)
@@ -204,19 +230,16 @@ final class StorageManager: RBStorage {
         try? realm?.write {
             realm?.deleteAll()
         }
-        Realm.deleteDb()
-    }
-    
-    func wipeDBKey() {
-        dbKey?.wipe()
-        dbKey = nil
+        if includingDBKey {
+            realm = nil
+            Realm.deleteDb()
+        }
     }
     
     // MARK: - DB Key -
-    private func loadDbKey() {
+    private func loadDb() {
         if let key = getDbKey() {
             realm = try! Realm.db(key: key)
-            dbKey = key
         } else if let newKey = Realm.generateEncryptionKey(), !keychain.allKeys.contains("SC\(KeychainKey.dbKey.rawValue)") {
             realm = try! Realm.db(key: newKey)
             save(dbKey: newKey)
@@ -225,12 +248,10 @@ final class StorageManager: RBStorage {
     
     private func save(dbKey: Data) {
         keychain.set(dbKey, forKey: KeychainKey.dbKey.rawValue, withAccess: .accessibleAfterFirstUnlockThisDeviceOnly)
-        self.dbKey = dbKey
     }
     
     private func getDbKey() -> Data? {
-        guard let data = keychain.getData(KeychainKey.dbKey.rawValue) else { return nil }
-        return data
+        keychain.getData(KeychainKey.dbKey.rawValue)
     }
     
 }
@@ -243,10 +264,6 @@ extension StorageManager {
     
     func notifyLocalProximityDataChanged() {
         NotificationCenter.default.post(name: .localProximityDataDidChange, object: nil)
-    }
-    
-    @objc func applicationWillTerminate() {
-        wipeDBKey()
     }
     
 }
@@ -287,7 +304,7 @@ extension Realm {
                                       PermissionRole.self,
                                       PermissionUser.self]
         let databaseUrl: URL = dbsDirectoryUrl().appendingPathComponent("db.realm")
-        let userConfig: Realm.Configuration = Realm.Configuration(fileURL: databaseUrl, encryptionKey: key, schemaVersion: 5, migrationBlock: { _, _ in }, objectTypes: classes)
+        let userConfig: Realm.Configuration = Realm.Configuration(fileURL: databaseUrl, encryptionKey: key, schemaVersion: 6, migrationBlock: { _, _ in }, objectTypes: classes)
         return userConfig
     }
     

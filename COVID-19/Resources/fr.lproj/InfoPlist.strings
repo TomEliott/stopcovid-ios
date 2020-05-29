@@ -1,11 +1,13 @@
-/* 
-  InfoPlist.strings
-  COVID-19
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+//
+//  InfoPlist.strings
+//  STOP-COVID
+//
+//  Created by Lunabee Studio / Date - 29/05/2020 - for the STOP-COVID project.
+//
 
-  Created by Lunabee Studio on 10/04/2020 - for the STOP-COVID project.
-  Copyright © 2020 Lunabee Studio. All rights reserved.
-*/
-
-"NSBluetoothAlwaysUsageDescription" = "StopCovid a besoin du Bluetooth pour fonctionner correctement.";
-"NSBluetoothPeripheralUsageDescription" = "StopCovid a besoin du Bluetooth pour fonctionner correctement.";
+"NSBluetoothAlwaysUsageDescription" = "StopCovid a besoin du Bluetooth pour obtenir une estimation, sur la base d’un modèle statistique, de la proximité entre deux téléphones.";
+"NSBluetoothPeripheralUsageDescription" = "StopCovid a besoin du Bluetooth pour obtenir une estimation, sur la base d’un modèle statistique, de la proximité entre deux téléphones.";
 "NSCameraUsageDescription" = "StopCovid a besoin d'accéder à votre appareil photo pour scanner le QR code.";

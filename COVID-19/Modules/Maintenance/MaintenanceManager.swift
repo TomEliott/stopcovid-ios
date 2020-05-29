@@ -91,7 +91,8 @@ final class MaintenanceManager: NSObject {
 extension MaintenanceManager: URLSessionDelegate {
     
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        Certificate.certificate.validateChallenge(challenge) { validated, credential in
+        Certificate.appProd.validateChallenge(challenge) { validated, credential in
+            print("App Maintenance request - Certificate (StopCovid) validated: \(validated)")
             validated ? completionHandler(.useCredential, credential) : completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }

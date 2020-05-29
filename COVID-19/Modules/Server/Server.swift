@@ -20,6 +20,10 @@ final class Server: NSObject, RBServer {
     
     typealias ProcessRequestCompletion = (_ result: Result<Data, Error>) -> ()
     
+    var publicKey: Data? {
+        Data(base64Encoded: "")
+    }
+    
     private lazy var session: URLSession = {
         let backgroundConfiguration: URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "StopCovid")
         return URLSession(configuration: backgroundConfiguration, delegate: self, delegateQueue: .main)
@@ -27,22 +31,21 @@ final class Server: NSObject, RBServer {
     private var receivedData: [String: Data] = [:]
     private var completions: [String: ProcessRequestCompletion] = [:]
     
-    func status(ebid: String, time: String, mac: String, completion: @escaping (_ result: Result<RBStatusResponse, Error>) -> ()) {
-        let body: RBServerStatusBody = RBServerStatusBody(ebid: ebid, time: time, mac: mac)
+    func status(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ result: Result<RBStatusResponse, Error>) -> ()) {
+        let body: RBServerStatusBody = RBServerStatusBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
         processRequest(url: ServerConstant.Url.status, method: .post, body: body) { result in
             switch result {
             case let .success(data):
-                do {
-                    let response: RBServerStatusResponse = try JSONDecoder().decode(RBServerStatusResponse.self, from: data)
-                    let epochs: [RBEpoch] = response.idsForEpochs.map {
-                        RBEpoch(id: $0.epochId, ebid: $0.key.ebid, ecc: $0.key.ecc)
+                ParametersManager.shared.fetchConfig { _ in
+                    do {
+                        let response: RBServerStatusResponse = try JSONDecoder().decode(RBServerStatusResponse.self, from: data)
+                        let transformedResponse: RBStatusResponse = RBStatusResponse(atRisk: response.atRisk,
+                                                                                     lastExposureTimeFrame: response.lastExposureTimeframe,
+                                                                                     tuples: response.tuples)
+                        completion(.success(transformedResponse))
+                    } catch {
+                        completion(.failure(error))
                     }
-                    let transformedResponse: RBStatusResponse = RBStatusResponse(atRisk: response.atRisk,
-                                                                                 lastExposureTimeFrame: response.lastExposureTimeframe,
-                                                                                 epochs: epochs)
-                    completion(.success(transformedResponse))
-                } catch {
-                    completion(.failure(error))
                 }
             case let .failure(error):
                 completion(.failure(error))
@@ -52,16 +55,20 @@ final class Server: NSObject, RBServer {
     
     func report(code: String, helloMessages: [RBLocalProximity], completion: @escaping (_ error: Error?) -> ()) {
         let contacts: [RBServerContact] = prepareContactsReport(from: helloMessages)
-        let body: RBServerReportBody = RBServerReportBody(code: code, contacts: contacts)
+        let body: RBServerReportBody = RBServerReportBody(token: code, contacts: contacts)
         processRequest(url: ServerConstant.Url.report, method: .post, body: body) { result in
             switch result {
             case let .success(data):
                 do {
-                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                    if response.success != false {
+                    if data.isEmpty {
                         completion(nil)
                     } else {
-                        completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                        if response.success != false {
+                            completion(nil)
+                        } else {
+                            completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        }
                     }
                 } catch {
                     completion(error)
@@ -72,27 +79,29 @@ final class Server: NSObject, RBServer {
         }
     }
     
-    func register(token: String, completion: @escaping (_ result: Result<RBRegisterResponse, Error>) -> ()) {
-        let body: RBServerRegisterBody = RBServerRegisterBody(captcha: token)
+    func register(token: String, publicKey: String, completion: @escaping (_ result: Result<RBRegisterResponse, Error>) -> ()) {
+        let body: RBServerRegisterBody = RBServerRegisterBody(captcha: token, clientPublicECDHKey: publicKey)
         processRequest(url: ServerConstant.Url.register, method: .post, body: body) { result in
             switch result {
             case let .success(data):
-                do {
-                    let response: RBServerRegisterResponse = try JSONDecoder().decode(RBServerRegisterResponse.self, from: data)
-                    let epochs: [RBEpoch] = response.idsForEpochs.map {
-                        RBEpoch(id: $0.epochId, ebid: $0.key.ebid, ecc: $0.key.ecc)
+                ParametersManager.shared.fetchConfig { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        do {
+                            let response: RBServerRegisterResponse = try JSONDecoder().decode(RBServerRegisterResponse.self, from: data)
+                            
+                            let rootJson: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any] ?? [:]
+                            let config: [[String: Any]] = rootJson["config"] as? [[String: Any]] ?? []
+                            
+                            let transformedResponse: RBRegisterResponse = RBRegisterResponse(tuples: response.tuples,
+                                                                                             timeStart: response.timeStart,
+                                                                                             config: config)
+                            completion(.success(transformedResponse))
+                        } catch {
+                            completion(.failure(error))
+                        }
                     }
-                    
-                    let rootJson: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any] ?? [:]
-                    let filteringAlgoConfig: [[String: Any]] = rootJson["filteringAlgoConfig"] as? [[String: Any]] ?? []
-                    
-                    let transformedResponse: RBRegisterResponse = RBRegisterResponse(key: response.key,
-                                                                                     epochs: epochs,
-                                                                                     timeStart: response.timeStart,
-                                                                                     filteringAlgoConfig: filteringAlgoConfig)
-                    completion(.success(transformedResponse))
-                } catch {
-                    completion(.failure(error))
                 }
             case let .failure(error):
                 completion(.failure(error))
@@ -100,17 +109,21 @@ final class Server: NSObject, RBServer {
         }
     }
     
-    func unregister(ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
-        let body: RBServerUnregisterBody = RBServerUnregisterBody(ebid: ebid, time: time, mac: mac)
+    func unregister(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
+        let body: RBServerUnregisterBody = RBServerUnregisterBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
         processRequest(url: ServerConstant.Url.unregister, method: .post, body: body) { result in
             switch result {
             case let .success(data):
                 do {
-                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                    if response.success != false {
+                    if data.isEmpty {
                         completion(nil)
                     } else {
-                        completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                        if response.success != false {
+                            completion(nil)
+                        } else {
+                            completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        }
                     }
                 } catch {
                     completion(error)
@@ -121,17 +134,21 @@ final class Server: NSObject, RBServer {
         }
     }
     
-    func deleteExposureHistory(ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
-        let body: RBServerDeleteExposureBody = RBServerDeleteExposureBody(ebid: ebid, time: time, mac: mac)
+    func deleteExposureHistory(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
+        let body: RBServerDeleteExposureBody = RBServerDeleteExposureBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
         processRequest(url: ServerConstant.Url.deleteExposureHistory, method: .post, body: body) { result in
             switch result {
             case let .success(data):
                 do {
-                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                    if response.success != false {
+                    if data.isEmpty {
                         completion(nil)
                     } else {
-                        completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                        if response.success != false {
+                            completion(nil)
+                        } else {
+                            completion(NSError.localizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                        }
                     }
                 } catch {
                     completion(error)
@@ -223,7 +240,7 @@ extension Server: URLSessionDelegate, URLSessionDataDelegate {
     }
     
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        Certificate.certificate.validateChallenge(challenge) { validated, credential in
+        Certificate.apiProd.validateChallenge(challenge) { validated, credential in
             validated ? completionHandler(.useCredential, credential) : completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }

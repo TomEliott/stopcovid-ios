@@ -17,8 +17,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let rootCoordinator: RootCoordinator = RootCoordinator()
     
-    @UserDefault(key: "isAppAlreadyInstalled")
+    @UserDefault(key: .isAppAlreadyInstalled)
     var isAppAlreadyInstalled: Bool = false
+    @UserDefault(key: .isOnboardingDone)
+    private var isOnboardingDone: Bool = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         initAppearance()
@@ -26,17 +28,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         LocalizationsManager.shared.start()
         PrivacyManager.shared.start()
         OrientationManager.shared.start()
-        PKHUD.sharedHUD.gracePeriod = 0.2
-        RBManager.shared.start(isFirstInstall: !isAppAlreadyInstalled, server: Server(), storage: StorageManager(), bluetooth: BluetoothManager(serviceUUID: BluetoothConstants.serviceUUID, characteristicUUID: BluetoothConstants.characteristicUUID))
+        if isOnboardingDone {
+            BluetoothStateManager.shared.start()
+        }
+        RBManager.shared.start(isFirstInstall: !isAppAlreadyInstalled, server: Server(), storage: StorageManager(), bluetooth: BluetoothManager())
+        ParametersManager.shared.start()
         isAppAlreadyInstalled = true
         rootCoordinator.start()
         initAppMaintenance()
-        initBackgroundFetch()
         return true
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        UIApplication.shared.applicationIconBadgeNumber = 0
+        UIApplication.shared.clearBadge()
     }
     
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -44,6 +48,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             RBManager.shared.status { error in
                 completionHandler(error == nil ? .newData : .failed)
             }
+        } else {
+            // This is done not to have a smaller background fetch requests frequency.
+            completionHandler(.newData)
         }
     }
     
@@ -55,10 +62,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         URLCache.shared.diskCapacity = 0
         URLCache.shared.memoryCapacity = 0
         URLSession.shared.configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
-    }
-    
-    private func initBackgroundFetch() {
-        UIApplication.shared.setMinimumBackgroundFetchInterval(ServerConstant.statusRequestFrequencyInHours * 60 * 60)
     }
     
     private func initAppMaintenance() {

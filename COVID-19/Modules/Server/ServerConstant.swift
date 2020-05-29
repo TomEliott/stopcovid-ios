@@ -11,18 +11,18 @@
 import Foundation
 
 struct ServerConstant {
-
+    
     struct Url {
-        static let base: URL = URL(string: "https://")!
-        static let status: URL = Url.base.appendingPathComponent("status")
-        static let report: URL = Url.base.appendingPathComponent("report")
-        static let register: URL = Url.base.appendingPathComponent("register")
-        static let unregister: URL = Url.base.appendingPathComponent("unregister")
-        static let deleteExposureHistory: URL = Url.base.appendingPathComponent("deleteExposureHistory")
+        
+        static let base: URL = URL(string: "https://api.stopcovid.gouv.fr")!
+        
+        static let status: URL = Url.base.appendingPathComponent("api/v1/status")
+        static let report: URL = Url.base.appendingPathComponent("api/v1/report")
+        static let register: URL = Url.base.appendingPathComponent("api/v1/register")
+        static let unregister: URL = Url.base.appendingPathComponent("api/v1/unregister")
+        static let deleteExposureHistory: URL = Url.base.appendingPathComponent("api/v1/deleteExposureHistory")
     }
     
     static let acceptedReportCodeLength: [Int] = [6, 36]
-    static let quarantineDurationInDays: Int = 14
-    static let statusRequestFrequencyInHours: Double = 24.0
     
 }

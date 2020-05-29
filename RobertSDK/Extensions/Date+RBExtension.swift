@@ -20,4 +20,8 @@ public extension Date {
         self.init(timeIntervalSince1970: Double(timeIntervalSince1900 - 2208988800))
     }
     
+    func rbDateByAddingDays(_ days: Int) -> Date {
+        addingTimeInterval(Double(days) * 24.0 * 3600.0)
+    }
+    
 }

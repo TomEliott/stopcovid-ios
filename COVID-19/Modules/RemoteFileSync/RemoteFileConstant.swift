@@ -13,6 +13,8 @@ import UIKit
 
 enum RemoteFileConstant {
 
-    static let baseUrl = "https://"
+    static let baseUrl = "https://app.stopcovid.gouv.fr/json/version-22"
+    
+    static let useOnlyLocalStrings: Bool = ProcessInfo.processInfo.environment["LOCAL_STRINGS"] == "YES"
     
 }

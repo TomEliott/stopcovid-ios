@@ -36,6 +36,7 @@ internal enum Asset {
     internal static let cough = ImageAsset(name: "Cough")
     internal static let distance = ImageAsset(name: "Distance")
     internal static let hands = ImageAsset(name: "Hands")
+    internal static let mask = ImageAsset(name: "Mask")
     internal static let tissues = ImageAsset(name: "Tissues")
     internal static let visage = ImageAsset(name: "Visage")
     internal static let manageData = ImageAsset(name: "ManageData")

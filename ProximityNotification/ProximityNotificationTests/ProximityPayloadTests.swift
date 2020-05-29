@@ -11,7 +11,7 @@
 @testable import ProximityNotification
 import XCTest
 
-class TestProximityPayload: XCTestCase {
+class ProximityPayloadTests: XCTestCase {
     
     func testInitWithDataSucceeds() {
         // Given

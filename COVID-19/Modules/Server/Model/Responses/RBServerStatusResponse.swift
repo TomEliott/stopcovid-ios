@@ -15,6 +15,6 @@ struct RBServerStatusResponse: RBServerResponse {
     var atRisk: Bool
     var lastExposureTimeframe: Int?
     var message: String?
-    var idsForEpochs: [RBServerEpoch]
+    var tuples: String
 
 }

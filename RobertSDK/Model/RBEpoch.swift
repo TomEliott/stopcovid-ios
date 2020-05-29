@@ -10,16 +10,14 @@
 
 import UIKit
 
-public struct RBEpoch: RBStorable {
+public struct RBEpoch: Decodable {
     
-    public let id: Int
-    public let ebid: String
-    public let ecc: String
+    public let epochId: Int
+    public let key: RBEpochKey
     
-    public init(id: Int, ebid: String, ecc: String) {
-        self.id = id
-        self.ebid = ebid
-        self.ecc = ecc
+    public init(epochId: Int, key: RBEpochKey) {
+        self.epochId = epochId
+        self.key = key
     }
     
 }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AF51E485247418E000645356 /* ProximityPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E484247418E000645356 /* ProximityPayload.swift */; };
-		AF51E4892474242F00645356 /* TestProximityPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E4882474242F00645356 /* TestProximityPayload.swift */; };
+		AF51E4892474242F00645356 /* ProximityPayloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E4882474242F00645356 /* ProximityPayloadTests.swift */; };
 		AF51E490247444A300645356 /* BluetoothPeripheralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E48D247444A300645356 /* BluetoothPeripheralManagerMock.swift */; };
 		AF51E492247444A300645356 /* BluetoothCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E48F247444A300645356 /* BluetoothCentralManagerMock.swift */; };
 		AF51E4972474475300645356 /* ProximityInfoRiskComputerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF51E4932474475300645356 /* ProximityInfoRiskComputerTests.swift */; };
@@ -62,7 +62,7 @@
 
 /* Begin PBXFileReference section */
 		AF51E484247418E000645356 /* ProximityPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityPayload.swift; sourceTree = "<group>"; };
-		AF51E4882474242F00645356 /* TestProximityPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestProximityPayload.swift; sourceTree = "<group>"; };
+		AF51E4882474242F00645356 /* ProximityPayloadTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProximityPayloadTests.swift; sourceTree = "<group>"; };
 		AF51E48D247444A300645356 /* BluetoothPeripheralManagerMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothPeripheralManagerMock.swift; sourceTree = "<group>"; };
 		AF51E48F247444A300645356 /* BluetoothCentralManagerMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluetoothCentralManagerMock.swift; sourceTree = "<group>"; };
 		AF51E4932474475300645356 /* ProximityInfoRiskComputerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProximityInfoRiskComputerTests.swift; sourceTree = "<group>"; };
@@ -176,8 +176,8 @@
 				AF51E4962474475300645356 /* CacheTests.swift */,
 				AFC9D3C1246C413F001B7F5B /* Info.plist */,
 				AF51E4932474475300645356 /* ProximityInfoRiskComputerTests.swift */,
+				AF51E4882474242F00645356 /* ProximityPayloadTests.swift */,
 				AFC9D3C9246C46F5001B7F5B /* RiskComputerDataset.csv */,
-				AF51E4882474242F00645356 /* TestProximityPayload.swift */,
 			);
 			path = ProximityNotificationTests;
 			sourceTree = "<group>";
@@ -302,7 +302,7 @@
 			files = (
 				AF51E49A2474475300645356 /* CacheTests.swift in Sources */,
 				AF51E490247444A300645356 /* BluetoothPeripheralManagerMock.swift in Sources */,
-				AF51E4892474242F00645356 /* TestProximityPayload.swift in Sources */,
+				AF51E4892474242F00645356 /* ProximityPayloadTests.swift in Sources */,
 				AF51E492247444A300645356 /* BluetoothCentralManagerMock.swift in Sources */,
 				AF51E4972474475300645356 /* ProximityInfoRiskComputerTests.swift in Sources */,
 				AF51E4982474475300645356 /* BluetoothProximityNotificationTests.swift in Sources */,

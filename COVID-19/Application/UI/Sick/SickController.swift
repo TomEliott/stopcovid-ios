@@ -10,6 +10,7 @@
 
 import UIKit
 import RobertSDK
+import PKHUD
 
 final class SickController: CVTableViewController {
     
@@ -76,7 +77,8 @@ final class SickController: CVTableViewController {
         let imageRow: CVRow = CVRow(image: Asset.Images.diagnosis.image, xibName: .onboardingImageCell)
         
         let notificationDate: Date? = RBManager.shared.lastStatusReceivedDate
-        let isolationEndDate: Date? = notificationDate?.dateByAddingDays(ServerConstant.quarantineDurationInDays)
+        let remainingIsolationDaysCount: Int = max((ParametersManager.shared.quarantinePeriod ?? 14) - (RBManager.shared.lastExposureTimeFrame ?? 0), 0)
+        let isolationEndDate: Date? = notificationDate?.dateByAddingDays(remainingIsolationDaysCount)
         let stateRow: CVRow = CVRow(title: "sickController.state.contact.title".localized,
                                     subtitle: String(format: "sickController.state.contact.subtitle".localized, isolationEndDate?.dayMonthFormatted() ?? "N/A"),
                                     accessoryText: String(format: "sickController.state.date".localized, notificationDate?.dayMonthFormatted() ?? "N/A"),
@@ -134,22 +136,28 @@ final class SickController: CVTableViewController {
         let declarationTextRow: CVRow = CVRow(title: "sickController.sick.mainMessage.title".localized,
                                               subtitle: "sickController.sick.mainMessage.subtitle".localized,
                                               xibName: .textCell,
-                                              theme: CVRow.Theme(topInset: 40.0, bottomInset: 40.0, buttonStyle: .secondary))
+                                              theme: CVRow.Theme(topInset: 40.0, bottomInset: 40.0))
         
         let recommendationsButton: CVRow = CVRow(title: "sickController.button.recommendations".localized,
                                         xibName: .buttonCell,
-                                        theme: CVRow.Theme(topInset: 10.0, bottomInset: 10.0, buttonStyle: .secondary),
+                                        theme: CVRow.Theme(topInset: 10.0, bottomInset: 10.0, buttonStyle: .primary),
                                         selectionAction: {
             URL(string: "sickController.button.recommendations.url".localized)?.openInSafari()
         })
         let phoneButton: CVRow = CVRow(title: "informationController.step.appointment.buttonTitle".localized,
                                             xibName: .buttonCell,
-                                            theme: CVRow.Theme(topInset: 10.0, bottomInset: 10.0, buttonStyle: .secondary),
+                                            theme: CVRow.Theme(topInset: 10.0, bottomInset: 10.0, buttonStyle: .primary),
                                             selectionAction: { [weak self] in
             guard let self = self else { return }
             "callCenter.phoneNumber".localized.callPhoneNumber(from: self)
         })
-        return [titleRow, imageRow, declarationTextRow, recommendationsButton, phoneButton]
+        let unregisterButton: CVRow = CVRow(title: "manageDataController.quitStopCovid.button".localized,
+                                            xibName: .buttonCell,
+                                            theme: CVRow.Theme(topInset: 10.0, bottomInset: 10.0, buttonStyle: .secondary),
+                                            selectionAction: { [weak self] in
+            self?.unregisterButtonPressed()
+        })
+        return [titleRow, imageRow, declarationTextRow, recommendationsButton, phoneButton, unregisterButton]
     }
     
     private func commonRows() -> [CVRow] {
@@ -250,6 +258,25 @@ final class SickController: CVTableViewController {
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         navigationChildController?.scrollViewDidScroll(scrollView)
+    }
+    
+    private func unregisterButtonPressed() {
+        showAlert(title: "manageDataController.quitStopCovid.confirmationDialog.title".localized,
+                  message: "manageDataController.quitStopCovid.confirmationDialog.message".localized,
+                  okTitle: "common.yes".localized,
+                  isOkDestructive: true,
+                  cancelTitle: "common.no".localized) {
+            HUD.show(.progress)
+            RBManager.shared.unregister { [weak self] error in
+                HUD.hide()
+                if let error = error {
+                    self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
+                } else {
+                    ParametersManager.shared.clearConfig()
+                    NotificationCenter.default.post(name: .changeAppState, object: RootCoordinator.State.onboarding, userInfo: nil)
+                }
+            }
+        }
     }
 
 }
