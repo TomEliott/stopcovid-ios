@@ -32,7 +32,10 @@ public final class RBManager {
     }
     public var isAtRisk: Bool? {
         get { storage.isAtRisk() }
-        set { storage.save(isAtRisk: newValue) }
+        set {
+            storage.save(isAtRisk: newValue)
+            isAtRiskDidChangeHandler?(newValue)
+        }
     }
     public var lastStatusReceivedDate: Date? {
         get { storage.lastStatusReceivedDate() }
@@ -42,19 +45,26 @@ public final class RBManager {
         get { storage.lastExposureTimeFrame() }
         set { storage.save(lastExposureTimeFrame: newValue) }
     }
-    public var currentEpoch: RBEpoch? { storage.getCurrentEpoch() }
+    public var epochsCount: Int { storage.epochsCount() }
+    public var currentEpoch: RBEpoch? { storage.getCurrentEpoch(defaultingToLast: false) }
+    public var currentEpochOrLast: RBEpoch? { storage.getCurrentEpoch(defaultingToLast: true) }
     public var localProximityList: [RBLocalProximity] { storage.getLocalProximityList() }
     
     public var proximitiesRetentionDurationInDays: Int?
     public var preSymptomsSpan: Int?
     
+    private var isAtRiskDidChangeHandler: ((_ isAtRisk: Bool?) -> ())?
+    private var didStopProximityDueToLackOfEpochsHandler: (() -> ())?
+    
     // Prevent any other instantiations.
     private init() {}
     
-    public func start(isFirstInstall: Bool = false, server: RBServer, storage: RBStorage, bluetooth: RBBluetooth, restartProximityIfPossible: Bool = true) {
+    public func start(isFirstInstall: Bool = false, server: RBServer, storage: RBStorage, bluetooth: RBBluetooth, restartProximityIfPossible: Bool = true, isAtRiskDidChangeHandler: @escaping (_ isAtRisk: Bool?) -> (), didStopProximityDueToLackOfEpochsHandler: @escaping () -> ()) {
         self.server = server
         self.storage = storage
         self.bluetooth = bluetooth
+        self.isAtRiskDidChangeHandler = isAtRiskDidChangeHandler
+        self.didStopProximityDueToLackOfEpochsHandler = didStopProximityDueToLackOfEpochsHandler
         if isFirstInstall {
             self.storage.clearAll(includingDBKey: true)
         }
@@ -69,7 +79,7 @@ public final class RBManager {
         guard let ka = ka else { return }
         bluetooth.start(helloMessageCreationHandler: { completion in
             DispatchQueue.main.async {
-                if let epoch = self.storage.getCurrentEpoch() {
+                if let epoch = self.currentEpoch {
                     let ntpTimestamp: Int = Date().timeIntervalSince1900
                     do {
                         let data = try RBMessageGenerator.generateHelloMessage(for: epoch, ntpTimestamp: ntpTimestamp, key: ka)
@@ -78,6 +88,9 @@ public final class RBManager {
                         completion(nil)
                     }
                 } else {
+                    self.isProximityActivated = false
+                    self.stopProximityDetection()
+                    self.didStopProximityDueToLackOfEpochsHandler?()
                     completion(nil)
                 }
             }
@@ -123,7 +136,7 @@ extension RBManager {
             completion(NSError.rbLocalizedError(message: "No key found to make request", code: 0))
             return
         }
-        guard let epoch = storage.getCurrentEpoch() else {
+        guard let epoch = currentEpochOrLast else {
             completion(NSError.rbLocalizedError(message: "No epoch found to make request", code: 0))
             return
         }
@@ -203,7 +216,7 @@ extension RBManager {
             completion(NSError.rbLocalizedError(message: "No key found to make request", code: 0))
             return
         }
-        guard let epoch = storage.getCurrentEpoch() else {
+        guard let epoch = currentEpochOrLast else {
             completion(NSError.rbLocalizedError(message: "No epoch found to make request", code: 0))
             return
         }
@@ -230,7 +243,7 @@ extension RBManager {
             completion(NSError.rbLocalizedError(message: "No key found to make request", code: 0))
             return
         }
-        guard let epoch = storage.getCurrentEpoch() else {
+        guard let epoch = currentEpochOrLast else {
             completion(NSError.rbLocalizedError(message: "No epoch found to make request", code: 0))
             return
         }
@@ -275,10 +288,7 @@ extension RBManager {
 extension RBManager {
     
     private func processRegisterResponse(_ response: RBRegisterResponse, keys: RBECKeys) throws {
-        guard let serverPublicKey = server.publicKey else {
-            throw NSError.rbLocalizedError(message: "Malformed server public key.", code: 0)
-        }
-        let cryptoKeys: RBCryptoKeys = try RBKeysManager.generateSecret(keys: keys, serverPublicKey: serverPublicKey)
+        let cryptoKeys: RBCryptoKeys = try RBKeysManager.generateSecret(keys: keys, serverPublicKey: server.publicKey)
         storage.save(ka: cryptoKeys.ka)
         storage.save(kea: cryptoKeys.kea)
         

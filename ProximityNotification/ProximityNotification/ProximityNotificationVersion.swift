@@ -14,13 +14,13 @@ import Foundation
 public struct ProximityNotificationVersion {
     
     /// The major version number. Should be incremented when making incompatible API changes.
-    public static let major = 0
+    public static let major = 1
     
     /// The minor version number. Should be incremented when adding functionality in a backward compatible manner.
-    public static let minor = 4
+    public static let minor = 0
     
     /// The patch version number. Should be incremented when making backward compatible bug fixes.
-    public static let patch = 3
+    public static let patch = 0
     
     /// A textual description of the current version.
     public static var current: String {

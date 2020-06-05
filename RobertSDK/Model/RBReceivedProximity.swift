@@ -12,11 +12,11 @@ import UIKit
 
 public struct RBReceivedProximity {
 
-    let data: Data
-    let timeCollectedOnDevice: Int
-    let rssiRaw: Int
-    let rssiCalibrated: Int
-    let tx: Int
+    public let data: Data
+    public let timeCollectedOnDevice: Int
+    public let rssiRaw: Int
+    public let rssiCalibrated: Int
+    public let tx: Int
 
     public init(data: Data, timeCollectedOnDevice: Int, rssiRaw: Int, rssiCalibrated: Int, tx: Int) {
         self.data = data

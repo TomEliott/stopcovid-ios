@@ -17,9 +17,10 @@ public protocol RBStorage {
     
     // MARK: - Epoch -
     func save(epochs: [RBEpoch])
-    func getCurrentEpoch() -> RBEpoch?
+    func getCurrentEpoch(defaultingToLast: Bool) -> RBEpoch?
     func getEpoch(for id: Int) -> RBEpoch?
     func getLastEpoch() -> RBEpoch?
+    func epochsCount() -> Int
     
     // MARK: - TimeStart -
     func save(timeStart: Int) throws

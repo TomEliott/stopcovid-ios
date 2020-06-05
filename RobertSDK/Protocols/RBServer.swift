@@ -12,7 +12,7 @@ import Foundation
 
 public protocol RBServer {
 
-    var publicKey: Data? { get }
+    var publicKey: Data { get }
     
     func status(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ result: Result<RBStatusResponse, Error>) -> ())
     func report(code: String, helloMessages: [RBLocalProximity], completion: @escaping (_ error: Error?) -> ())
