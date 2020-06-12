@@ -29,6 +29,7 @@ enum Constant {
     enum Server {
         
         static let baseUrl: URL = URL(string: "https://api.stopcovid.gouv.fr/api/v1")!
+        
         static let publicKey: Data = Data(base64Encoded: "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEAc9IDt6qJq453SwyWPB94JaLB2VfTAcL43YVtMr3HhDCd22gKaQXIbX1d+tNhfvaKM51sxeaXziPjntUzbTNiw==")!
         
         static var certificate: Data { Bundle.main.fileDataFor(fileName: "api.stopcovid.gouv.fr", ofType: "pem") ?? Data() }

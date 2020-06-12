@@ -1,9 +1,11 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 //  TitleCell.swift
-//  StopCovid
+//  STOP-COVID
 //
-//  Created by Nicolas on 03/06/2020.
-//  Copyright © 2020 Lunabee Studio. All rights reserved.
+//  Created by Lunabee Studio / Date - 01/06/2020 - for the STOP-COVID project.
 //
 
 import UIKit

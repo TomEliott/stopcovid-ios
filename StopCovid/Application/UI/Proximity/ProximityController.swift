@@ -46,7 +46,6 @@ final class ProximityController: CVTableViewController {
         initBottomMessageContainer()
         addObserver()
         setInteractiveRecognizer()
-        reloadUI()
         updateNotificationsState {
             self.updateUIForAuthorizationChange()
         }
@@ -252,10 +251,16 @@ final class ProximityController: CVTableViewController {
                     RBManager.shared.status { error in
                         HUD.hide()
                         self.isChangingState = false
-                        if error != nil {
-                            self.showAlert(title: "common.error".localized,
-                                           message: "common.error.server".localized,
-                                           okTitle: "common.ok".localized)
+                        if let error = error {
+                            if (error as NSError).code == -1 {
+                                self.showAlert(title: "common.error.clockNotAligned.title".localized,
+                                               message: "common.error.clockNotAligned.message".localized,
+                                               okTitle: "common.ok".localized)
+                            } else {
+                                self.showAlert(title: "common.error".localized,
+                                               message: "common.error.server".localized,
+                                               okTitle: "common.ok".localized)
+                            }
                         } else {
                             self.processRegistrationDone()
                         }
@@ -277,10 +282,16 @@ final class ProximityController: CVTableViewController {
                     RBManager.shared.register(token: token) { error in
                         HUD.hide()
                         self.isChangingState = false
-                        if error != nil {
-                            self.showAlert(title: "common.error".localized,
-                                           message: "common.error.server".localized,
-                                           okTitle: "common.ok".localized)
+                        if let error = error {
+                            if (error as NSError).code == -1 {
+                                self.showAlert(title: "common.error.clockNotAligned.title".localized,
+                                               message: "common.error.clockNotAligned.message".localized,
+                                               okTitle: "common.ok".localized)
+                            } else {
+                                self.showAlert(title: "common.error".localized,
+                                               message: "common.error.server".localized,
+                                               okTitle: "common.ok".localized)
+                            }
                         } else {
                             self.processRegistrationDone()
                         }

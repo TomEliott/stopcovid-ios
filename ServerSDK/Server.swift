@@ -23,9 +23,10 @@ public final class Server: NSObject, RBServer {
     public let publicKey: Data
     private let baseUrl: URL
     private let certificateFile: Data
+    private let deviceTimeNotAlignedToServerTimeDetected: () -> ()
     
     private lazy var session: URLSession = {
-        let backgroundConfiguration: URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "StopCovid")
+        let backgroundConfiguration: URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "fr.gouv.stopcovid.ios.ServerSDK")
         backgroundConfiguration.timeoutIntervalForRequest = ServerConstant.timeout
         backgroundConfiguration.timeoutIntervalForResource = ServerConstant.timeout
         return URLSession(configuration: backgroundConfiguration, delegate: self, delegateQueue: .main)
@@ -33,27 +34,39 @@ public final class Server: NSObject, RBServer {
     private var receivedData: [String: Data] = [:]
     private var completions: [String: ProcessRequestCompletion] = [:]
     
-    public init(baseUrl: URL, publicKey: Data, certificateFile: Data, configUrl: URL) {
+    public init(baseUrl: URL, publicKey: Data, certificateFile: Data, configUrl: URL, deviceTimeNotAlignedToServerTimeDetected: @escaping () -> ()) {
         self.baseUrl = baseUrl
         self.publicKey = publicKey
         self.certificateFile = certificateFile
+        self.deviceTimeNotAlignedToServerTimeDetected = deviceTimeNotAlignedToServerTimeDetected
         ParametersManager.shared.url = configUrl
     }
     
     public func status(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ result: Result<RBStatusResponse, Error>) -> ()) {
-        let body: RBServerStatusBody = RBServerStatusBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
-        processRequest(url: baseUrl.appendingPathComponent("status"), method: .post, body: body) { result in
-            switch result {
-            case let .success(data):
-                ParametersManager.shared.fetchConfig { _ in
-                    do {
-                        let response: RBServerStatusResponse = try JSONDecoder().decode(RBServerStatusResponse.self, from: data)
-                        let transformedResponse: RBStatusResponse = RBStatusResponse(atRisk: response.atRisk,
-                                                                                     lastExposureTimeFrame: response.lastExposureTimeframe,
-                                                                                     tuples: response.tuples)
-                        completion(.success(transformedResponse))
-                    } catch {
-                        completion(.failure(error))
+        ParametersManager.shared.fetchConfig { configResult in
+            switch configResult {
+            case let .success(serverTime):
+                let nowTimeStamp: Double = Date().timeIntervalSince1970
+                if abs(nowTimeStamp - serverTime) > ServerConstant.maxClockShiftToleranceInSeconds {
+                    self.deviceTimeNotAlignedToServerTimeDetected()
+                    completion(.failure(NSError.deviceTime))
+                } else {
+                    let body: RBServerStatusBody = RBServerStatusBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
+                    self.processRequest(url: self.baseUrl.appendingPathComponent("status"), method: .post, body: body) { result in
+                        switch result {
+                        case let .success(data):
+                            do {
+                                let response: RBServerStatusResponse = try JSONDecoder().decode(RBServerStatusResponse.self, from: data)
+                                let transformedResponse: RBStatusResponse = RBStatusResponse(atRisk: response.atRisk,
+                                                                                             lastExposureTimeFrame: response.lastExposureTimeframe,
+                                                                                             tuples: response.tuples)
+                                completion(.success(transformedResponse))
+                            } catch {
+                                completion(.failure(error))
+                            }
+                        case let .failure(error):
+                            completion(.failure(error))
+                        }
                     }
                 }
             case let .failure(error):
@@ -63,24 +76,37 @@ public final class Server: NSObject, RBServer {
     }
     
     public func report(code: String, helloMessages: [RBLocalProximity], completion: @escaping (_ error: Error?) -> ()) {
-        let contacts: [RBServerContact] = prepareContactsReport(from: helloMessages)
-        let body: RBServerReportBody = RBServerReportBody(token: code, contacts: contacts)
-        processRequest(url: baseUrl.appendingPathComponent("report"), method: .post, body: body) { result in
-            switch result {
-            case let .success(data):
-                do {
-                    if data.isEmpty {
-                        completion(nil)
-                    } else {
-                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                        if response.success != false {
-                            completion(nil)
-                        } else {
-                            completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+        ParametersManager.shared.fetchConfig { configResult in
+            switch configResult {
+            case let .success(serverTime):
+                let nowTimeStamp: Double = Date().timeIntervalSince1970
+                if abs(nowTimeStamp - serverTime) > ServerConstant.maxClockShiftToleranceInSeconds {
+                    self.deviceTimeNotAlignedToServerTimeDetected()
+                    completion(NSError.deviceTime)
+                } else {
+                    let contacts: [RBServerContact] = self.prepareContactsReport(from: helloMessages)
+                    let body: RBServerReportBody = RBServerReportBody(token: code, contacts: contacts)
+                    self.processRequest(url: self.baseUrl.appendingPathComponent("report"), method: .post, body: body) { result in
+                        switch result {
+                        case let .success(data):
+                            do {
+                                if data.isEmpty {
+                                    completion(nil)
+                                } else {
+                                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                                    if response.success != false {
+                                        completion(nil)
+                                    } else {
+                                        completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                                    }
+                                }
+                            } catch {
+                                completion(error)
+                            }
+                        case let .failure(error):
+                            completion(error)
                         }
                     }
-                } catch {
-                    completion(error)
                 }
             case let .failure(error):
                 completion(error)
@@ -89,25 +115,32 @@ public final class Server: NSObject, RBServer {
     }
     
     public func register(token: String, publicKey: String, completion: @escaping (_ result: Result<RBRegisterResponse, Error>) -> ()) {
-        let body: RBServerRegisterBody = RBServerRegisterBody(captcha: token, clientPublicECDHKey: publicKey)
-        processRequest(url: baseUrl.appendingPathComponent("register"), method: .post, body: body) { result in
-            switch result {
-            case let .success(data):
-                ParametersManager.shared.fetchConfig { error in
-                    if let error = error {
-                        completion(.failure(error))
-                    } else {
-                        do {
-                            let response: RBServerRegisterResponse = try JSONDecoder().decode(RBServerRegisterResponse.self, from: data)
-                            
-                            let rootJson: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any] ?? [:]
-                            let config: [[String: Any]] = rootJson["config"] as? [[String: Any]] ?? []
-                            
-                            let transformedResponse: RBRegisterResponse = RBRegisterResponse(tuples: response.tuples,
-                                                                                             timeStart: response.timeStart,
-                                                                                             config: config)
-                            completion(.success(transformedResponse))
-                        } catch {
+        ParametersManager.shared.fetchConfig { configResult in
+            switch configResult {
+            case let .success(serverTime):
+                let nowTimeStamp: Double = Date().timeIntervalSince1970
+                if abs(nowTimeStamp - serverTime) > ServerConstant.maxClockShiftToleranceInSeconds {
+                    self.deviceTimeNotAlignedToServerTimeDetected()
+                    completion(.failure(NSError.deviceTime))
+                } else {
+                    let body: RBServerRegisterBody = RBServerRegisterBody(captcha: token, clientPublicECDHKey: publicKey)
+                    self.processRequest(url: self.baseUrl.appendingPathComponent("register"), method: .post, body: body) { result in
+                        switch result {
+                        case let .success(data):
+                            do {
+                                let response: RBServerRegisterResponse = try JSONDecoder().decode(RBServerRegisterResponse.self, from: data)
+                                
+                                let rootJson: [String: Any] = (try? JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any] ?? [:]
+                                let config: [[String: Any]] = rootJson["config"] as? [[String: Any]] ?? []
+                                
+                                let transformedResponse: RBRegisterResponse = RBRegisterResponse(tuples: response.tuples,
+                                                                                                 timeStart: response.timeStart,
+                                                                                                 config: config)
+                                completion(.success(transformedResponse))
+                            } catch {
+                                completion(.failure(error))
+                            }
+                        case let .failure(error):
                             completion(.failure(error))
                         }
                     }
@@ -119,23 +152,36 @@ public final class Server: NSObject, RBServer {
     }
     
     public func unregister(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
-        let body: RBServerUnregisterBody = RBServerUnregisterBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
-        processRequest(url: baseUrl.appendingPathComponent("unregister"), method: .post, body: body) { result in
-            switch result {
-            case let .success(data):
-                do {
-                    if data.isEmpty {
-                        completion(nil)
-                    } else {
-                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                        if response.success != false {
-                            completion(nil)
-                        } else {
-                            completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+        ParametersManager.shared.fetchConfig { configResult in
+            switch configResult {
+            case let .success(serverTime):
+                let nowTimeStamp: Double = Date().timeIntervalSince1970
+                if abs(nowTimeStamp - serverTime) > ServerConstant.maxClockShiftToleranceInSeconds {
+                    self.deviceTimeNotAlignedToServerTimeDetected()
+                    completion(NSError.deviceTime)
+                } else {
+                    let body: RBServerUnregisterBody = RBServerUnregisterBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
+                    self.processRequest(url: self.baseUrl.appendingPathComponent("unregister"), method: .post, body: body) { result in
+                        switch result {
+                        case let .success(data):
+                            do {
+                                if data.isEmpty {
+                                    completion(nil)
+                                } else {
+                                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                                    if response.success != false {
+                                        completion(nil)
+                                    } else {
+                                        completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                                    }
+                                }
+                            } catch {
+                                completion(error)
+                            }
+                        case let .failure(error):
+                            completion(error)
                         }
                     }
-                } catch {
-                    completion(error)
                 }
             case let .failure(error):
                 completion(error)
@@ -144,23 +190,36 @@ public final class Server: NSObject, RBServer {
     }
     
     public func deleteExposureHistory(epochId: Int, ebid: String, time: String, mac: String, completion: @escaping (_ error: Error?) -> ()) {
-        let body: RBServerDeleteExposureBody = RBServerDeleteExposureBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
-        processRequest(url: baseUrl.appendingPathComponent("deleteExposureHistory"), method: .post, body: body) { result in
-            switch result {
-            case let .success(data):
-                do {
-                    if data.isEmpty {
-                        completion(nil)
-                    } else {
-                        let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
-                        if response.success != false {
-                            completion(nil)
-                        } else {
-                            completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+        ParametersManager.shared.fetchConfig { configResult in
+            switch configResult {
+            case let .success(serverTime):
+                let nowTimeStamp: Double = Date().timeIntervalSince1970
+                if abs(nowTimeStamp - serverTime) > ServerConstant.maxClockShiftToleranceInSeconds {
+                    self.deviceTimeNotAlignedToServerTimeDetected()
+                    completion(NSError.deviceTime)
+                } else {
+                    let body: RBServerDeleteExposureBody = RBServerDeleteExposureBody(epochId: epochId, ebid: ebid, time: time, mac: mac)
+                    self.processRequest(url: self.baseUrl.appendingPathComponent("deleteExposureHistory"), method: .post, body: body) { result in
+                        switch result {
+                        case let .success(data):
+                            do {
+                                if data.isEmpty {
+                                    completion(nil)
+                                } else {
+                                    let response: RBServerStandardResponse = try JSONDecoder().decode(RBServerStandardResponse.self, from: data)
+                                    if response.success != false {
+                                        completion(nil)
+                                    } else {
+                                        completion(NSError.svLocalizedError(message: response.message ?? "An unknown error occurred", code: 0))
+                                    }
+                                }
+                            } catch {
+                                completion(error)
+                            }
+                        case let .failure(error):
+                            completion(error)
                         }
                     }
-                } catch {
-                    completion(error)
                 }
             case let .failure(error):
                 completion(error)
@@ -222,10 +281,11 @@ extension Server: URLSessionDelegate, URLSessionDataDelegate {
         let requestId: String = dataTask.taskDescription ?? ""
         guard let completion = completions[requestId] else { return }
         DispatchQueue.main.async {
-            if let statusCode = (dataTask.response as? HTTPURLResponse)?.statusCode, "\(statusCode)".first != "2" {
+            if dataTask.response?.svIsError == true {
+                let statusCode: Int = dataTask.response?.svStatusCode ?? 0
                 let message: String? = data.isEmpty ? "No logs received from the server" : String(data: data, encoding: .utf8)
-                completion(.failure(NSError.svLocalizedError(message: "Unknown error (\(statusCode)). (\(message ?? "N/A"))", code: statusCode)))
-                self.completions[dataTask.taskDescription ?? ""] = nil
+                completion(.failure(NSError.svLocalizedError(message: "Uknown error (\(statusCode)). (\(message ?? "N/A"))", code: statusCode)))
+                self.completions[requestId] = nil
             } else {
                 var receivedData: Data = self.receivedData[requestId] ?? Data()
                 receivedData.append(data)
@@ -242,14 +302,21 @@ extension Server: URLSessionDelegate, URLSessionDataDelegate {
                 completion(.failure(error))
             } else {
                 let receivedData: Data = self.receivedData[requestId] ?? Data()
-                completion(.success(receivedData))
+                if task.response?.svIsError == true {
+                    let statusCode: Int = task.response?.svStatusCode ?? 0
+                    let message: String = receivedData.isEmpty ? "No data received from the server" : (String(data: receivedData, encoding: .utf8) ?? "Unknown error")
+                    completion(.failure(NSError.svLocalizedError(message: "Uknown error (\(statusCode)). (\(message))", code: statusCode)))
+                } else {
+                    completion(.success(receivedData))
+                }
             }
-            self.completions[task.taskDescription ?? ""] = nil
+            self.completions[requestId] = nil
         }
     }
     
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         CertificatePinning.validateChallenge(challenge, certificateFile: certificateFile) { validated, credential in
+            print("Server request - Certificate (StopCovid) validated: \(validated)")
             validated ? completionHandler(.useCredential, credential) : completionHandler(.cancelAuthenticationChallenge, nil)
         }
     }

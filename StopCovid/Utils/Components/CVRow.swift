@@ -37,11 +37,7 @@ struct CVRow {
     
     static var empty: CVRow {
         CVRow(xibName: .emptyCell,
-              theme: CVRow.Theme(topInset: 0.0, bottomInset: 0.0),
-              willDisplay: { cell in
-                cell.isAccessibilityElement = false
-                cell.accessibilityElementsHidden = true
-        })
+              theme: CVRow.Theme(topInset: 0.0, bottomInset: 0.0))
     }
     
     var title: String?

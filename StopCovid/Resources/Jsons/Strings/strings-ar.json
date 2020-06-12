@@ -271,5 +271,7 @@
     "common.error.bleScanner": "فشل المسح Bluetooth. حاول مرة أخرى أو أعد تشغيل هاتفك.",
     "common.error.proximityNotification": "فشل إصدار إشعار Bluetooth. حاول مرة أخرى أو أعد تشغيل هاتفك.",
     "proximityController.error.bluetoothOff": "عليك تفعيل تقنية Bluetooth ليعمل تطبيق StopCovid",
-    "onboarding.gesturesController.gesture7": "يجب ارتداء القناع حين لا يمكن احترام مسافة 1 متر"
+    "onboarding.gesturesController.gesture7": "يجب ارتداء القناع حين لا يمكن احترام مسافة 1 متر",
+    "common.error.clockNotAligned.title": "Veuillez utiliser l'horloge automatique",
+    "common.error.clockNotAligned.message": "Votre téléphone n’est pas à l’heure précise. Pour votre sécurité, StopCovid ne pourra pas fonctionner correctement avec une heure imprécise."
 }

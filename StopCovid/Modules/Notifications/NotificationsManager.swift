@@ -95,4 +95,16 @@ final class NotificationsManager: NSObject, UNUserNotificationCenterDelegate {
         }
     }
     
+    func triggerDeviceTimeErrorNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "common.error.clockNotAligned.title".localized
+        content.body = "common.error.clockNotAligned.message".localized
+        content.sound = .default
+        content.badge = 1
+        let request: UNNotificationRequest = UNNotificationRequest(identifier: NotificationsContant.Identifier.error, content: content, trigger: nil)
+        requestAuthorization { _ in
+            UNUserNotificationCenter.current().add(request) { _ in }
+        }
+    }
+    
 }

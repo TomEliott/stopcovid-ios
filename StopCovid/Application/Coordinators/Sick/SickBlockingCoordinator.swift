@@ -10,7 +10,6 @@
 
 
 import UIKit
-import RobertSDK
 
 final class SickBlockingCoordinator: WindowedCoordinator {
 

@@ -38,12 +38,22 @@ final class ReCaptchaManager: NSObject {
             HUD.hide()
             do {
                 let token: String = try result.dematerialize()
-                controller.dismiss {
+                if controller.isViewLoaded {
+                    controller.dismiss {
+                        completion(token)
+                        self?.reset()
+                    }
+                } else {
                     completion(token)
                     self?.reset()
                 }
             } catch {
-                controller.dismiss {
+                if controller.isViewLoaded {
+                    controller.dismiss {
+                        completion(nil)
+                        self?.reset()
+                    }
+                } else {
                     completion(nil)
                     self?.reset()
                 }

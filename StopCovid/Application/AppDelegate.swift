@@ -24,11 +24,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     @UserDefault(key: .isOnboardingDone)
     private var isOnboardingDone: Bool = false
     
-    @UserDefault(key: .lastStatusBackgroundFetchTimestamp)
-    private var lastStatusBackgroundFetchTimestamp: Double = 0.0
-    @UserDefault(key: .lastStatusBackgroundFetchDidSucceed)
-    private var lastStatusBackgroundFetchDidSucceed: Bool = false
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         initAppearance()
         initUrlCache()
@@ -42,7 +37,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                server: Server(baseUrl: Constant.Server.baseUrl,
                                               publicKey: Constant.Server.publicKey,
                                               certificateFile: Constant.Server.certificate,
-                                              configUrl: Constant.Server.configUrl),
+                                              configUrl: Constant.Server.configUrl,
+                                              deviceTimeNotAlignedToServerTimeDetected: {
+                                    if UIApplication.shared.applicationState != .active {
+                                        NotificationsManager.shared.triggerDeviceTimeErrorNotification()
+                                    }
+                               }),
                                storage: StorageManager(),
                                bluetooth: BluetoothManager(),
                                isAtRiskDidChangeHandler: { isAtRisk in
@@ -63,18 +63,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.clearBadge()
     }
     
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        if RBManager.shared.isRegistered {
-            RBManager.shared.status { error in
-                self.lastStatusBackgroundFetchTimestamp = Date().timeIntervalSince1970
-                self.lastStatusBackgroundFetchDidSucceed = error == nil
-                completionHandler(error == nil ? .newData : .failed)
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        triggerStatusRequestIfNeeded { error in
+            if let error = error, (error as NSError).code == -1 {
+                NotificationsManager.shared.triggerDeviceTimeErrorNotification()
             }
-        } else {
-            lastStatusBackgroundFetchTimestamp = Date().timeIntervalSince1970
-            lastStatusBackgroundFetchDidSucceed = true
-            // This is done not to have a smaller background fetch requests frequency.
-            completionHandler(.newData)
+        }
+    }
+    
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        triggerStatusRequestIfNeeded() { error in
+            completionHandler(error == nil ? .newData : .failed)
         }
     }
     
@@ -91,5 +90,23 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private func initAppMaintenance() {
         MaintenanceManager.shared.start(coordinator: rootCoordinator)
     }
-
+    
+    private func triggerStatusRequestIfNeeded(completion: ((_ error: Error?) -> ())? = nil) {
+        if RBManager.shared.isRegistered {
+            let lastStatusRequestTimestamp: Double = RBManager.shared.lastStatusReceivedDate?.timeIntervalSince1970 ?? 0.0
+            let nowTimestamp: Double = Date().timeIntervalSince1970
+            if nowTimestamp - lastStatusRequestTimestamp >= ParametersManager.shared.statusTimeInterval {
+                RBManager.shared.status { error in
+                    self.lastStatusBackgroundFetchTimestamp = Date().timeIntervalSince1970
+                    self.lastStatusBackgroundFetchDidSucceed = error == nil
+                    completion?(error)
+                }
+            } else {
+                completion?(nil)
+            }
+        } else {
+            completion?(nil)
+        }
+    }
+    
 }

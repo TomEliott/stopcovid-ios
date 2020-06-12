@@ -12,10 +12,12 @@
 import UIKit
 import RobertSDK
 
-public final class ParametersManager {
+public final class ParametersManager: NSObject {
+    
+    typealias RequestCompletion = (_ result: Result<Double, Error>) -> ()
     
     public static let shared: ParametersManager = ParametersManager()
-    public var url: URL!
+    var url: URL!
     
     public var minHourContactNotif: Int? {
         guard let hour = valueFor(name: "app.minHourContactNotif") as? Double else { return nil }
@@ -32,6 +34,11 @@ public final class ParametersManager {
     }
     var checkStatusFrequency: Double? { valueFor(name: "app.checkStatusFrequency") as? Double }
     var randomStatusHour: Double? { valueFor(name: "app.randomStatusHour") as? Double }
+    public var statusTimeInterval: Double {
+        let randomStatusHour: Double = self.randomStatusHour ?? 0.0
+        let interval: Double = (self.checkStatusFrequency ?? 0.0) * 3600.0 + (randomStatusHour == 0.0 ? 0.0 : Double.random(in: 0..<randomStatusHour * 3600.0))
+        return interval
+    }
     public var quarantinePeriod: Int? {
         guard let period = valueFor(name: "app.quarantinePeriod") as? Double else { return nil }
         return Int(period)
@@ -46,7 +53,16 @@ public final class ParametersManager {
     private var config: [[String: Any]] = [] {
         didSet { distributeUpdatedConfig() }
     }
-    private var shouldUpdateFetchTimeInterval: Bool = false
+    
+    private var receivedData: [String: Data] = [:]
+    private var completions: [String: RequestCompletion] = [:]
+    
+    private lazy var session: URLSession = {
+        let backgroundConfiguration: URLSessionConfiguration = URLSessionConfiguration.background(withIdentifier: "fr.gouv.stopcovid.ios.ServerSDK-Config")
+        backgroundConfiguration.timeoutIntervalForRequest = ServerConstant.timeout
+        backgroundConfiguration.timeoutIntervalForResource = ServerConstant.timeout
+        return URLSession(configuration: backgroundConfiguration, delegate: self, delegateQueue: .main)
+    }()
     
     public func start() {
         loadLocalConfigIfPossible()
@@ -71,24 +87,13 @@ public final class ParametersManager {
         }
     }
     
-    func fetchConfig(_ completion: @escaping (_ error: Error?) -> ()) {
-        let dataTask: URLSessionDataTask = URLSession.shared.dataTask(with: url) { data, response, error in
-            guard let data = data else { return }
-            do {
-                let json: [String: Any] = (try JSONSerialization.jsonObject(with: data, options: [])) as? [String: Any] ?? [:]
-                self.shouldUpdateFetchTimeInterval = true
-                self.config = json["config"] as? [[String: Any]] ?? []
-                try data.write(to: self.localFileUrl())
-                DispatchQueue.main.async {
-                    completion(nil)
-                }
-            } catch {
-                DispatchQueue.main.async {
-                    completion(error)
-                }
-            }
-        }
-        dataTask.resume()
+    // TODO: Fetch config using background url session.
+    func fetchConfig(_ completion: @escaping (_ result: Result<Double, Error>) -> ()) {
+        let requestId: String = UUID().uuidString
+        completions[requestId] = completion
+        let task: URLSessionDataTask = session.dataTask(with: url)
+        task.taskDescription = requestId
+        task.resume()
     }
     
     public func clearConfig() {
@@ -113,14 +118,10 @@ public final class ParametersManager {
             RBManager.shared.stopProximityDetection()
             RBManager.shared.startProximityDetection()
         }
-        DispatchQueue.main.async {
-            self.refreshBackgroundFetchInterval()
-        }
+        refreshBackgroundFetchInterval()
     }
     
     private func refreshBackgroundFetchInterval() {
-        guard shouldUpdateFetchTimeInterval else { return }
-        shouldUpdateFetchTimeInterval = false
         if let checkStatusFrequency = checkStatusFrequency {
             let randomStatusHour: Double = self.randomStatusHour ?? 0.0
             let interval: Double = checkStatusFrequency * 3600.0 + (randomStatusHour == 0.0 ? 0.0 : Double.random(in: 0..<randomStatusHour * 3600.0))
@@ -138,6 +139,59 @@ public final class ParametersManager {
     
     private func localFileUrl() -> URL {
         createWorkingDirectoryIfNeeded().appendingPathComponent("config.json")
+    }
+    
+}
+
+extension ParametersManager: URLSessionDelegate, URLSessionDataDelegate {
+    
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        let requestId: String = dataTask.taskDescription ?? ""
+        guard let completion = completions[requestId] else { return }
+        DispatchQueue.main.async {
+            if dataTask.response?.svIsError == true {
+                let statusCode: Int = dataTask.response?.svStatusCode ?? 0
+                let message: String = data.isEmpty ? "No logs received from the server" : (String(data: data, encoding: .utf8) ?? "Unknown error")
+                completion(.failure(NSError.svLocalizedError(message: "Uknown error (\(statusCode)). (\(message))", code: statusCode)))
+                self.completions[dataTask.taskDescription ?? ""] = nil
+            } else {
+                var receivedData: Data = self.receivedData[requestId] ?? Data()
+                receivedData.append(data)
+                self.receivedData[requestId] = receivedData
+            }
+        }
+    }
+    
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        let requestId: String = task.taskDescription ?? ""
+        guard let completion = completions[requestId] else { return }
+        DispatchQueue.main.async {
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                let receivedData: Data = self.receivedData[requestId] ?? Data()
+                if task.response!.svIsError == true {
+                    let statusCode: Int = task.response?.svStatusCode ?? 0
+                    let message: String = receivedData.isEmpty ? "No data received from the server" : (String(data: receivedData, encoding: .utf8) ?? "Unknown error" )
+                    completion(.failure(NSError.svLocalizedError(message: "Uknown error (\(statusCode)). (\(message))", code: statusCode)))
+                    self.completions[task.taskDescription ?? ""] = nil
+                } else {
+                    do {
+                        let json: [String: Any] = (try JSONSerialization.jsonObject(with: receivedData, options: [])) as? [String: Any] ?? [:]
+                        try receivedData.write(to: self.localFileUrl())
+                        self.config = json["config"] as? [[String: Any]] ?? []
+                        DispatchQueue.main.async {
+                            completion(.success(task.response!.serverTime))
+                        }
+                    } catch {
+                        DispatchQueue.main.async {
+                            completion(.failure(error))
+                        }
+                    }
+                }
+            }
+            self.completions[task.taskDescription ?? ""] = nil
+        }
     }
     
 }

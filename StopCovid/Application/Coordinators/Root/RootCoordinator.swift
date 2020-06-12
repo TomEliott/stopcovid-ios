@@ -231,7 +231,7 @@ extension RootCoordinator: MaintenanceSupportingCoordinator {
     }
     
     private func appMaintenanceCoordinator() -> AppMaintenanceCoordinator? {
-        childCoordinators.filter({ $0 is AppMaintenanceCoordinator }).first as? AppMaintenanceCoordinator
+        childCoordinators.compactMap({ $0 as? AppMaintenanceCoordinator }).first
     }
     
 }

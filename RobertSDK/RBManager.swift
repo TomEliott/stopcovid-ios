@@ -298,6 +298,7 @@ extension RBManager {
             clearLocalEpochs()
             storage.save(epochs: epochs)
         }
+        lastStatusReceivedDate = Date()
     }
     
     private func processStatusResponse(_ response: RBStatusResponse) throws {

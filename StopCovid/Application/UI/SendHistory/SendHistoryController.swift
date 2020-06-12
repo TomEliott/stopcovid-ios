@@ -74,13 +74,19 @@ final class SendHistoryController: CVTableViewController {
         HUD.show(.progress)
         RBManager.shared.report(code: symptomsParams.code, symptomsOrigin: symptomsParams.date) { error in
             HUD.hide()
-            if error != nil {
-                self.showAlert(title: "sendHistoryController.alert.invalidCode.title".localized,
-                               message: "sendHistoryController.alert.invalidCode.message".localized,
-                               okTitle: "common.ok".localized,
-                               handler: {
-                    self.dismissBlock()
-                })
+            if let error = error {
+                if (error as NSError).code == -1 {
+                    self.showAlert(title: "common.error.clockNotAligned.title".localized,
+                                    message: "common.error.clockNotAligned.message".localized,
+                                    okTitle: "common.ok".localized)
+                } else {
+                    self.showAlert(title: "sendHistoryController.alert.invalidCode.title".localized,
+                                   message: "sendHistoryController.alert.invalidCode.message".localized,
+                                   okTitle: "common.ok".localized,
+                                   handler: {
+                        self.dismissBlock()
+                    })
+                }
                 self.bottomButtonContainerController?.unlockButtons()
             } else {
                 RBManager.shared.unregister { error in

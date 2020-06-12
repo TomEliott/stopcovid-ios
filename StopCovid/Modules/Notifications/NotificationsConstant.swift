@@ -16,6 +16,7 @@ enum NotificationsContant {
     enum Identifier {
         static let atRisk: String = "atRiskNotification"
         static let error: String = "errorNotification"
+        static let deviceTimeError: String = "deviceTimeErrorNotification"
     }
     
 }

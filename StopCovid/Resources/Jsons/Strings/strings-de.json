@@ -271,6 +271,8 @@
     "common.error.bleScanner": "Das Bluetooth-Scanning ist gescheitert. Versuchen Sie es noch einmal oder starten Sie Ihr Telefon neu.",
     "common.error.proximityNotification": "Die Erstellung der Bluetooth-Benachrichtigung ist gescheitert. Versuchen Sie es noch einmal oder starten Sie Ihr Telefon neu.",
     "proximityController.error.bluetoothOff": "Damit StopCovid funktionieren kann, müssen Sie Bluetooth aktivieren",
-    "onboarding.gesturesController.gesture7": "Tragen Sie einen Mund-Nasen-Schutz, wenn der Sicherheitsabstand von 1 Meter nicht gewahrt werden kann"
+    "onboarding.gesturesController.gesture7": "Tragen Sie einen Mund-Nasen-Schutz, wenn der Sicherheitsabstand von 1 Meter nicht gewahrt werden kann",
+    "common.error.clockNotAligned.title": "Veuillez utiliser l'horloge automatique",
+    "common.error.clockNotAligned.message": "Votre téléphone n’est pas à l’heure précise. Pour votre sécurité, StopCovid ne pourra pas fonctionner correctement avec une heure imprécise."
 }
 

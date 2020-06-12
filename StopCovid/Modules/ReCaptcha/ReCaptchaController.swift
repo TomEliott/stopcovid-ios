@@ -39,6 +39,7 @@ final class ReCaptchaController: UIViewController {
     }
     
     deinit {
+        print("\(type(of: self)) deallocated")
         webView?.scrollView.delegate = nil
     }
     

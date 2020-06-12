@@ -134,7 +134,15 @@ final class ManageDataController: CVTableViewController {
                 RBManager.shared.deleteExposureHistory { error in
                     HUD.hide()
                     if let error = error {
-                        self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
+                        if (error as NSError).code == -1 {
+                            self?.showAlert(title: "common.error.clockNotAligned.title".localized,
+                                            message: "common.error.clockNotAligned.message".localized,
+                                            okTitle: "common.ok".localized)
+                        } else {
+                            self?.showAlert(title: "common.error".localized,
+                                            message: "common.error.server".localized,
+                                            okTitle: "common.ok".localized)
+                        }
                     } else {
                         self?.showFlash()
                     }
@@ -166,7 +174,15 @@ final class ManageDataController: CVTableViewController {
             RBManager.shared.unregister { [weak self] error in
                 HUD.hide()
                 if let error = error {
-                    self?.showAlert(title: "common.error".localized, message: error.localizedDescription, okTitle: "common.ok".localized)
+                    if (error as NSError).code == -1 {
+                        self?.showAlert(title: "common.error.clockNotAligned.title".localized,
+                                        message: "common.error.clockNotAligned.message".localized,
+                                        okTitle: "common.ok".localized)
+                    } else {
+                        self?.showAlert(title: "common.error".localized,
+                                        message: "common.error.server".localized,
+                                        okTitle: "common.ok".localized)
+                    }
                 } else {
                     ParametersManager.shared.clearConfig()
                     NotificationCenter.default.post(name: .changeAppState, object: RootCoordinator.State.onboarding, userInfo: nil)

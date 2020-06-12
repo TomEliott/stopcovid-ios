@@ -270,5 +270,7 @@
     "common.error.bleScanner": "Errore dello scanner bluetooth. Riprova o riavvia il tuo smartphone.",
     "common.error.proximityNotification": "Errore della creazione della notifica bluetooth. Riprova o riavvia il tuo smartphone.",
     "proximityController.error.bluetoothOff": "Per far funzionare StopCovid, attiva il Bluetooth",
-    "onboarding.gesturesController.gesture7": "Portare una maschera quando la distanza di un metro non può essere rispettata"
+    "onboarding.gesturesController.gesture7": "Portare una maschera quando la distanza di un metro non può essere rispettata",
+    "common.error.clockNotAligned.title": "Veuillez utiliser l'horloge automatique",
+    "common.error.clockNotAligned.message": "Votre téléphone n’est pas à l’heure précise. Pour votre sécurité, StopCovid ne pourra pas fonctionner correctement avec une heure imprécise."
 }

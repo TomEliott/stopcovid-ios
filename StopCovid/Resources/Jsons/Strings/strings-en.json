@@ -271,5 +271,7 @@
     "common.error.bleScanner": "Bluetooth scanning failed. Try again or restart your phone.",
     "common.error.proximityNotification": "Bluetooth notification creation failed. Try again or restart your phone.",
     "proximityController.error.bluetoothOff": "You need to activate Bluetooth to run StopCovid",
-    "onboarding.gesturesController.gesture7": "Wear a face mask if you cannot maintain a distance of one metre"
+    "onboarding.gesturesController.gesture7": "Wear a face mask if you cannot maintain a distance of one metre",
+    "common.error.clockNotAligned.title": "Veuillez utiliser l'horloge automatique",
+    "common.error.clockNotAligned.message": "Votre téléphone n’est pas à l’heure précise. Pour votre sécurité, StopCovid ne pourra pas fonctionner correctement avec une heure imprécise."
 }
