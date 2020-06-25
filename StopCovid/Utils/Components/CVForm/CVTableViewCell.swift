@@ -78,16 +78,29 @@ class CVTableViewCell: UITableViewCell {
         if let bottomInset = row.theme.bottomInset {
             bottomConstraint?.constant = bottomInset
         }
-        if let ratio = row.theme.imageRatio, let imageView = cvImageView {
-            let existingConstraint: NSLayoutConstraint? =  imageView.constraints.filter { $0.firstAnchor == imageView.widthAnchor }.first
-            if let constraint = existingConstraint {
-                imageView.removeConstraint(constraint)
+        if let imageWidthConstraint = imageWidthConstraint, let imageHeightConstraint = imageHeightConstraint{
+            if let ratio = row.theme.imageRatio {
+                if let imageView = cvImageView {
+                    let existingConstraint: NSLayoutConstraint? = imageView.constraints.filter { $0.firstAnchor == imageView.widthAnchor && $0.secondAnchor == imageView.heightAnchor }.first
+                    if let constraint = existingConstraint {
+                        imageView.removeConstraint(constraint)
+                    }
+                    imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: ratio, constant: 0.0).isActive = true
+                }
+                imageHeightConstraint.isActive = false
+            } else {
+                if let imageView = cvImageView {
+                    let existingConstraint: NSLayoutConstraint? = imageView.constraints.filter { $0.firstAnchor == imageView.widthAnchor && $0.secondAnchor == imageView.heightAnchor }.first
+                    if let constraint = existingConstraint {
+                        imageView.removeConstraint(constraint)
+                    }
+                }
+                imageHeightConstraint.isActive = true
             }
-            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: ratio, constant: 0.0).isActive = true
-        }
-        if let size = row.theme.imageSize {
-            imageWidthConstraint?.constant = size.width
-            imageHeightConstraint?.constant = size.height
+            if let size = row.theme.imageSize {
+                imageWidthConstraint.constant = size.width
+                imageHeightConstraint.constant = size.height
+            }
         }
         let leftInset: CGFloat? = row.theme.separatorLeftInset
         let rightInset: CGFloat? = row.theme.separatorRightInset
